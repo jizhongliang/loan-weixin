@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>忘记交易密码</title>
+		<link rel="stylesheet" type="text/css" href="../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../css/huiflex.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/loadingm.css"/>
+		<style type="text/css">
+			body {
+				color: #999999;
+			}
+			
+			.fc {
+				color: #999999;
+			}
+			
+			.inputbg {
+				padding: 12px 0;
+			}
+			
+			.inputbg input {
+				font-size: 18px;
+				width: 100px;
+				outline: none;
+				border: none;
+			}
+			
+			.btn {
+				background: #2c8ef3;
+				text-align: center;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border-radius: 6px;
+				margin: 25px;
+				margin-top: 45px;
+			}
+			.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+			.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+		</style>
+	</head>
+
+	<body>
+		<div class="" style="margin-top: 1em;padding: 0 15px;background: white;">
+			<div class="hui-flex inputbg">
+				<div id="" style="width: 75px;">真实姓名</div>
+				<input type="text" name="realName" id="realName" value="" style="" class="flex-1" />
+			</div>
+			<div id="" style="border-bottom: 1px solid #F6F6F6;"></div>
+			<div class="hui-flex inputbg">
+				<div id="" style="width: 75px;">身份证号码</div>
+				<input type="text" name="idNo" id="idNo" value="" style="" class="flex-1" />
+			</div>
+			<div id="" style="border-bottom: 1px solid #F6F6F6;"></div>
+			<div class="hui-flex inputbg">
+				<div id="" style="width: 75px;">手机号码</div>
+				<input type="text" name="phone" id="phoneText" readonly value="" style="" class="flex-1" />
+				<input type="hidden" name="phone" id="phone" readonly value="" style="" class="flex-1" />
+			</div>
+			<div id="" style="border-bottom: 1px solid #F6F6F6;"></div>
+			<div class="hui-flex inputbg">
+				<div id="" style="width: 75px;">验证码</div>
+				<input type="" name="vCode" id="vCode" value="" style="" class="flex-1" />
+				<div class="" id="vcodebtn">| 获取验证码</div>
+			</div>
+			<div id="" style="border-bottom: 1px solid #F6F6F6;"></div>
+
+		</div>
+		<div class="" style="margin-top: .5em;padding: 0 15px;background: white;">
+			<div class="hui-flex inputbg">
+				<div id="" style="width: 75px;">新交易密码</div>
+				<input type="password" name="tradePwd" id="tradePwd" value="" style="" class="flex-1" />
+			</div>
+		</div>
+
+		<div class="btn" style="" id="savebtn">
+			保 存
+		</div>
+		
+		<div id="myModal" class="loading-modal dismiss">
+			<!-- Modal content -->
+			<div class="loading-modal-content">
+				<img src="../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+				<span id="" style="vertical-align: middle;margin-left: 1em">
+					数据加载中...
+				</span>
+			</div>
+		</div>
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var btn_timer;
+			var countTime = 60;
+			var hasSend=false;
+            var namereg=/^[\u4e00-\u9fa5]+$/;
+            var reg = /^1\d{10}$/;
+            $(document).ready(function() {
+                FastClick.attach(document.body);
+                if(localStorage.caiweiObj){
+                    var cwobj=JSON.parse(localStorage.caiweiObj);
+                    initEvent(cwobj);
+                }else{
+                    error("微信授权过期");
+                    return;
+                }
+            });
+
+			function forgetPwd(data){
+				
+				if(data.success){
+				    error("忘记交易密码重置成功");
+				    setTimeout(function () {
+                        window.history.go(-1);
+                    },1500)
+
+				}else{
+					error(data.message);
+				}
+			}
+			
+			function verifyCode(data){
+				if(data.success){
+					
+				}else{
+					error(data.message);
+				}
+			}
+			
+			function changeBtn() {
+				if(countTime >= 0) {
+					$("#vcodebtn").text(countTime + "秒重发");
+					countTime = countTime - 1;
+				} else {
+					stopBtn();
+				}
+			}
+
+			function sendWaiting() {
+				changeBtn();
+				btn_timer = setInterval(changeBtn, 1000);
+			}
+
+			function stopBtn(){
+				clearInterval(btn_timer);
+				hasSend = false;
+				$("#vcodebtn").text("| 获取验证码");
+				countTime = 60;
+			}
+
+			function checkBaseInfoInput(){
+                var	nlreg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+
+                var nameReg=/^[\u4E00-\u9FA5A-Za-z]+$/;
+
+                var phoneReg=/^1(3|4|5|7|8)\d{9}$/;
+
+                if(!$('#idNo').val() || $('#idNo').val().length <= 0) {
+                    $('#idNo').focus();
+                    error("请输入身份证号码！");
+                    return false;
+                }
+                if(!nlreg.test($('#idNo').val())){
+                    $('#idNo').focus();
+                    error("请输入正确的身份证号码！");
+                    return false;
+                }
+
+
+                if(!$('#realName').val() || $('#realName').val().length <= 0) {
+                    $('#realName').focus();
+                    error("请输入姓名！");
+                    return false;
+                }
+
+                if(!nameReg.test($('#realName').val())){
+                    $('#realName').focus();
+                    error("只能包含文字和英文字母！");
+                    return false;
+				}
+
+                if(!$('#phone').val() || $('#phone').val().length <= 0) {
+                    $('#phone').focus();
+                    error("请输入手机号！");
+                    return false;
+                }
+                if(!phoneReg.test($('#phone').val())){
+                    $('#phone').focus();
+                    error("请输入正确的手机号码！");
+                    return false;
+                }
+                return true;
+
+			}
+
+			
+			function checkSaveInfo() {
+
+                var codeReg=/^\d{4}$/;
+
+                var tradeReg=/^\d{6}$/;
+				var flag=checkBaseInfoInput();
+
+				if(!flag){
+				    return false;
+				}
+
+                if(!$('#vCode').val() || $('#vCode').val().length <= 0) {
+                    $('#vCode').focus();
+                    error("请输入验证码！");
+                    return false;
+                }
+
+
+                if(!codeReg.test($('#vCode').val())) {
+                    $('#vCode').focus();
+                    error("请输入4位长度验证码，且为数字！");
+                    return false;
+                }
+
+                if(!$('#tradePwd').val() || $('#tradePwd').val().length <= 0) {
+                    $('#tradePwd').focus();
+                    error("请输入交易密码！");
+                    return;
+                }
+
+                if(!tradeReg.test($('#tradePwd').val())) {
+                    $('#tradePwd').focus();
+                    error("请输入6位交易密码，且为数字！");
+                    return false;
+                }
+
+                return true;
+            }
+
+
+            function sendCode() {
+                if(hasSend) return;
+                if(localStorage.caiweiWx){
+                    var caiweiWx=JSON.parse(localStorage.caiweiWx);
+                    sendWaiting();
+                    var pheaders={e:caiweiWx.openId};
+                    if(localStorage.caiweiObj){
+                        var lcaiweiObj=JSON.parse(localStorage.caiweiObj);
+                        if(lcaiweiObj.token){
+                            pheaders.at=lcaiweiObj.token;
+                        }
+                    }
+                    postSerDataWithHeaders('/wechat/user/api/sendCode.shtml', {
+                        "phone": $('#phone').val(),
+                        "type": "findPay"
+                    }, function (data) {
+                        if(!data.success){
+                            stopBtn();
+                            error(data.message);
+                        }else{
+                            hasSend=true;
+                        }
+                    }, '发送验证码',pheaders);
+
+                }else{
+                    error("微信授权过期!");
+                }
+            }
+			
+            
+            function initLoginName(param) {
+			    var loginName=param.loginName;
+                $("#phone").val(loginName);
+			    if(loginName){
+                    loginName=loginName.substring(0,3)+"****"+loginName.substr(7);
+				}
+				$("#phoneText").val(loginName);
+            }
+
+			function initEvent(param){
+			    
+			    
+			    initLoginName(param);
+			    
+				$('#vcodebtn').click(function(){
+				    if(!checkBaseInfoInput()){
+				       return;
+					}
+                    postSerDataWithHeaders('/wechat/user/api/resetTradePwdPreCheck.shtml', {
+                        "loginName": $('#phone').val(),
+                        "realName": $('#realName').val(),
+                        "idNo": $('#idNo').val(),
+                        "userId":param.userId,
+                    }, function (data) {
+                        if(!data.success){
+                            error(data.message);
+                        }else{
+							sendCode();
+						}
+                    }, '用户身份校验');
+
+				});
+				
+				
+				$('#savebtn').click(function(){
+
+				    if(!checkSaveInfo()){
+				        return;
+					}
+
+					$('#myModal').removeClass('dismiss');
+					setTimeout(function() {
+                        postSerDataWithHeader('/wechat/user/api/resetTradePwd.shtml', {
+                            userId:param.userId,
+                            idNo: $('#idNo').val(),
+                            loginName:$('#phone').val(),
+                            realName: $('#realName').val(),
+                            tradePwd: $('#tradePwd').val(),
+							vCode: $('#vCode').val(),
+						}, forgetPwd, '忘记交易密码密码');
+						$('#myModal').addClass('dismiss');
+					},200);
+					
+				});
+			}
+
+            function error(msg){
+                $("body").append('<div class="error"><span class="error_msg"></span></div>');
+                $(".error").show();
+                $(".error_msg").html(msg);
+                setTimeout(function(){
+                    $(".error").remove();
+                },1500);
+            }
+		</script>
+	</body>
+
+</html>

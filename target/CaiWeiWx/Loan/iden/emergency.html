@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>紧急联系人</title>
+		<link rel="stylesheet" type="text/css" href="../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../css/huiflex.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+		<style type="text/css">
+			body {
+				color: #333;
+			}
+			
+			.inputbg {
+				padding: 12px 15px;
+				border-bottom: 1px solid #dbd9da;
+			}
+			
+			.inputbg input {
+				text-align: right;
+				font-size: 18px;
+				outline: none;
+				border: none;
+			}
+			
+			.btn {
+				background: #2c8ef3;
+				text-align: center;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border-radius: 6px;
+				margin: 25px;
+				margin-top: 35px;
+			}
+			
+			.fc {
+				color: #999999;
+			}
+			
+			.dlist {
+				height: 150px;
+				overflow-y: scroll;
+				overflow-x: hidden;
+			}
+			
+			.dlist>li {
+				text-align: center;
+				padding: 10px 5px;
+			}
+			.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+			.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+		</style>
+	</head>
+
+	<body>
+		<form action="" id="em_contact">
+			<div id="" style="padding: 15px;font-size: 16px;">
+				直系亲属
+			</div>
+			<div class="" style="background: white;">
+				<div class="hui-flex justify-between inputbg" id="irelbtn">
+					<div id="" style="width: 75px;"> 与本人关系</div>
+					<div class="fc" id="imre"><span id="imr"></span> > </div>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 75px;">姓名</div>
+					<input type="text" name="" id="iname" value="" maxlength="10" style="" class="flex-1" />
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 75px;">手机号码</div>
+					<input type="tel" name="" id="iphone" value="" style="" class="flex-1" />
+				</div>
+			</div>
+			<div id="" style="padding: 15px;font-size: 16px;">
+				其他联系人
+			</div>
+			<div class="" style="background: white;">
+				<div class="hui-flex justify-between inputbg" id="crelbtn">
+					<div id="" style="width: 75px;">与本人关系</div>
+					<div class="fc" id="core"><span id="cor"></span> > </div>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 75px;">姓名</div>
+					<input type="text" name="" id="cname" value="" maxlength="10" style="" class="flex-1" />
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 75px;">手机号码</div>
+					<input type="tel" name="" id="cphone" value="" style="" class="flex-1" />
+				</div>
+			</div>
+		</form>
+		<div style="margin-top: 20px;width: 100%;">
+			<div id="upload" class="btn">
+				提交认证
+			</div>
+		</div>
+
+		<div id="collateralModal" class="loading-modal" style="display: none;">
+			<!-- Modal content -->
+			<div class="loading-modal-content " style="width: 75%;">
+				<div class="" style="text-align: left;border-bottom: 1px solid #A9C8E8;padding: 10px;font-weight: bold;">
+					选择关系
+				</div>
+				<div class="">
+					<ul class="dlist" id="collateral">
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div id="immediateModal" class="loading-modal" style="display: none;">
+			<!-- Modal content -->
+			<div class="loading-modal-content " style="width: 75%;">
+				<div class="" style="text-align: left;border-bottom: 1px solid #A9C8E8;padding: 10px;font-weight: bold;">
+					选择关系
+				</div>
+				<div class="">
+					<ul class="dlist" id="immediate">
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var namereg=/^[\u4e00-\u9fa5]+$/;
+			var reg = /^1\d{10}$/;
+			var userphone=localStorage.getItem("phone");
+			$(function() {
+				FastClick.attach(document.body);
+				//				initCollateral(collateraldata);
+				//				initImmediate(immediatedata);
+				//				initEvent({"userId":118});
+				if(localStorage.caiweiObj) {
+					var caiweiObj = JSON.parse(localStorage.caiweiObj);
+					initEvent(caiweiObj);
+
+				} else {
+					error("微信授权过期");
+					return;
+				}
+			});
+
+			var collateraldata;
+			var immediatedata;
+
+			function initEvent(data) {
+				$('#irelbtn').click(function() {
+					if(!immediatedata) {
+						getImmediate();
+					}
+					$('#immediateModal').show();
+
+				});
+
+				$('#crelbtn').click(function() {
+					if(!collateraldata) {
+						getCollateral();
+					}
+					$('#collateralModal').show();
+				});
+
+				$('#upload').click(function() {
+
+					var p = checkData(data);
+					if(p) {
+						updateEmerContacts(p);
+					}
+				});
+
+			}
+
+			function checkData(data) {
+				var p;
+				if($('#imr').text().length <= 0) {
+					error("请选择直系亲属关系");
+					return false;
+				}
+				if($('#iname').val().length <= 0) {
+					error("直系亲属姓名不能空");
+					return false;
+				}
+				if($('#iphone').val().length <= 0) {
+					error("请输入直系亲属手机号");
+					return false;
+				}
+				if($('#cor').text().length <= 0) {
+					error("请选择其他联系人关系");
+					return false;
+				}
+				if($('#cname').val().length <= 0) {
+					error("其他联系人姓名不能空");
+					return false;
+				}
+				if($('#cphone').val().length <= 0) {
+					error("请输入其他联系人手机号");
+					return false;
+				}
+				if(!namereg.test($('#iname').val())){
+					error("直系亲属姓名不能为非汉字");
+					return false;
+				}
+				if(!validateSpace($('#iname').val())){
+				    $("#iname").focus();
+				    return false;
+				}
+				if(!validatePhone($('#iphone').val())) {
+					$('#iphone').focus();
+					error("请输入正确的直系亲属手机号");
+					return false;
+				}
+				if(!namereg.test($('#cname').val())){
+					error("其他联系人姓名不能为非汉字");
+					return false;
+				}
+				
+				if(!validatePhone($('#cphone').val())) {
+					$('#cphone').focus();
+					error("请输入正确的其他联系人手机号");
+					return false;
+				}
+
+                if($('#cphone').val() == $('#iphone').val()) {
+                    $('#cphone').focus();
+                    error("直系亲属与其他联系人手机号不能相同");
+                    return false;
+                }
+                if($('#cphone').val() == userphone || $('#iphone').val() == userphone) {
+                    $('#cphone').focus();
+                    error("当前登录手机号不可用于紧急联系人");
+                    return false;
+                }
+				
+				/**/
+
+				var p = {
+					"userId": data.userId, // 用户ID
+					"name":  $.trim($('#iname').val()) + "," + $.trim($('#cname').val()), // 联系人名字 用英文,分割
+					"phone": $('#iphone').val() + "," + $('#cphone').val(), // 联系人手机 用英文,分割
+					"relation": $('#imr').text() + "," + $('#cor').text(), // 联系人关系 用英文,分割
+					"type":  "10,20"  // 联系人类型 用英文,分割  10-直系 20-非直系
+				};
+
+				return p;
+			}
+
+			function getCollateral() {
+				$('#myModal').show();
+				setTimeout(function(){
+					postSerDataWithHeader('/wechat/user/api/basecodeList.shtml', {
+						"id": "collateral"
+					}, initCollateral, '其他人关系');
+					$('#myModal').hide();
+				},200);
+				
+			}
+
+			function getImmediate() {
+				$('#myModal').show();
+				setTimeout(function(){
+					postSerDataWithHeader('/wechat/user/api/basecodeList.shtml', {
+						"id": "immediate"
+					}, initImmediate, '直系关系');
+					$('#myModal').hide();
+				},200);
+				
+			}
+
+			function initCollateral(data) {
+				if(data.success) {
+					collateraldata = data.data;
+					var items = collateraldata.items;
+					for(var i = 0; i < items.length; i++) {
+						(function() {
+							var li = $("<li>" + items[i].descript + "</li>");
+							var item = items[i];
+							$(li).click(function() {
+//								console.log(JSON.stringify(item));
+								$('#cor').text(item.descript);
+								$('#cor').attr("data-type", item.code);
+								$('#collateralModal').hide();
+							});
+							$('#collateral').append(li);
+						})()
+					}
+				} else {
+					error(data.message)
+				}
+			}
+
+			function initImmediate(data) {
+				if(data.success) {
+					immediatedata = data.data;
+					var items = immediatedata.items;
+					for(var i = 0; i < items.length; i++) {
+						(function() {
+							var li = $("<li>" + items[i].descript + "</li>");
+							var item = items[i];
+							$(li).click(function() {
+//								console.log(JSON.stringify(item));
+								$('#imr').text(item.descript);
+								$('#imr').attr("data-type", item.code);
+								$('#immediateModal').hide();
+							});
+							$('#immediate').append(li);
+						})()
+					}
+				} else {
+					error(data.message)
+				}
+			}
+
+			function updateEmerContacts(param) {
+				$('#myModal').show();
+				setTimeout(function(){
+					postSerDataWithHeader('/wechat/iden/api/updateEmerContacts.shtml', param, afterUpdateEmerContacts, '修改联系人');
+					$('#myModal').hide();
+				},200);
+				
+			}
+
+			function afterUpdateEmerContacts(data) {
+			    if(!data.success){
+                    error(data.message);
+				}else{
+                    setTimeout(function (data) {
+                        error("联系人认证成功");
+                        window.location.href = "index.html?code="+localStorage.caiweicode+"&timeStamp="+getTimeStamp();
+                    },2000)
+				}
+			}
+
+			function getJson(sArr) {
+				var serializeObj = {};
+				$(sArr).each(function() {
+					serializeObj[this.name] = this.value;
+				});
+				return serializeObj;
+			}
+
+            function error(msg){
+                $("body").append('<div class="error"><span class="error_msg"></span></div>');
+                $(".error").show();
+                $(".error_msg").html(msg);
+                setTimeout(function(){
+                    $(".error").remove();
+                },1500);
+            }
+		</script>
+
+	</body>
+
+</html>

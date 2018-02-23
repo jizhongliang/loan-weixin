@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+    <META HTTP-EQUIV="expires" CONTENT="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="format-detection" content="telephone=no,date=no,address=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>申请分期</title>
+    <link rel="stylesheet" type="text/css" href="../../css/base.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/huiflex.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/loadingm.css" />
+    <link rel="stylesheet" type="text/css" href="../../guidance/css/iconfont.css"/>
+    <style>
+        body {
+            color: #333;
+        }
+        .inputbg {
+            padding: 12px 15px;
+            /*border-bottom: 1px solid #dbd9da;*/
+            border-bottom: 1px solid #F2F2F2;
+        }
+
+        .inputbg input {
+            text-align: right;
+            font-size: 18px;
+            outline: none;
+            border: none;
+        }
+
+        .btn {
+            background: #2c8ef3;
+            text-align: center;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+            margin: 15px;
+        }
+
+        .fc {
+            color: #999999;
+        }
+
+        .check {
+            color: #2c8ef3;
+            /*border-bottom: 1px solid #2c8ef3;*/
+        }
+
+        .mathbtn {
+            width: 60px;
+            text-align: center;
+            background: #2c8ef3;
+            color: white;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .btn-left {
+            border-radius: 9px 0 0 9px;
+        }
+
+        .btn-right {
+            border-radius: 0 9px 9px 0;
+        }
+
+        .dlist {
+            height: 150px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        .dlist>li {
+            text-align: center;
+            padding: 10px 5px;
+        }
+        .error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+        .error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+        .jh{
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .ze{
+            font-size: 12px;
+            color: #999999;
+        }
+        .top{
+            padding: 12px 15px;
+        }
+        .text_center{
+            text-align: center;
+        }
+        .money{
+            font-size: 30px;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+        .sqje{
+            padding: 5px;
+        }
+        .padding{
+            padding: 12px 15px 20px 15px;
+        }
+        ._hidden{
+            display: none;
+        }
+        .jihua_list{
+            border-top: 1px solid #F2F2F2;
+        }
+        .jihua_list table{
+            width: 100%;
+        }
+        .jihua_list table td{
+            width:25%;
+            padding: 10px 0;
+        }
+        .td_last{
+            color: #2C8EF3;
+            text-align: right;
+        }
+        .jhnr{
+            margin-right: 10px;
+        }
+        .checkImg{
+            padding: 8px 8px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="mainPage">
+    <div class="" style="background: white;">
+        <div class="top">
+            <div class="text_center sqje">申请金额</div>
+            <div class="text_center"><span class="fuhao">￥</span><span id="amount" class="money"></span>
+            </div>
+        </div>
+        <div class="hui-flex justify-between inputbg" id="credit_btn">
+            <div id="" style="width: 100px;">归还计划</div>
+            <div class="" style="font-size: 16px;" id="creditnum">分期数/息费*<span class="jhnr" id="periods"></span><img src="../../img/down.png" style="width: 14px;"/><img src="../img/up.png" style="width: 14px;" class="_hidden"/><p class="ze">归还总额￥<span class="money_sum" id="totalMoeny"></span></p></div>
+        </div>
+        <div class="jihua_list padding _hidden">
+            <table id="jl_table">
+
+            </table>
+        </div>
+
+        <div class="hui-flex justify-between inputbg">
+            <div id="" style="width: 75px;">归还方式</div>
+            <div id="" class="fc">每月等额本金 </div>
+        </div>
+    </div>
+
+    <div class="" style="background: white;">
+        <div class="hui-flex justify-between inputbg">
+            <div style="width: 110px;">首期归还金额</div>
+            <div class="" style="color: #2C8EF3;font-size: 16px;">￥ <span id="fristRePay">0</span></div>
+        </div>
+
+        <div class="hui-flex justify-between inputbg">
+            <div id="" style="width: 75px;">首期归还日</div>
+            <div id="current_repay_date" class="fc">年月日</div>
+        </div>
+        <div class="hui-flex justify-between inputbg" id="repaydetails">
+            <div id="" style="width: 75px;">转入账户</div>
+            <div id="account" class="check" ></div>
+        </div>
+    </div>
+    <div class="" style="background: white;">
+        <div id="mscenepar" class="hui-flex justify-between inputbg">
+            <div id="" style="width: 75px;">资金用途</div>
+            <div id="mscene" class="fc"></div>
+        </div>
+    </div>
+
+    <div id="" class="fc" style="padding: 10px 15px;">
+        <div style="font-size: 12px;line-height: 18px;">请选择资金的实际用途，禁止用于购房，投资及各种非消费场景</div>
+        <span id="contractpar"><img src="../../img/checked.png" style="vertical-align: middle;width: 16px;height: 16px;margin: -2px 6px 0 0;"/>我已阅读并同意 <a href="javascript:void(0)" style="color: #2c8ef3">《租金支付计划表》</a> </span>
+    </div>
+    <div class="" style="width: 100%;">
+        <div class="btn" style="" id="bor_btn">
+            申 请
+        </div>
+    </div>
+
+    <div id="myModal" class="loading-modal" style="z-index: 99;display: none;">
+        <!-- Modal content -->
+        <div class="loading-modal-content">
+            <img src="../../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+            <span id="" style="vertical-align: middle;margin-left: 1em">
+					数据加载中...
+				</span>
+        </div>
+    </div>
+
+    <div id="moneyModal" class="loading-modal" style="display: none;">
+        <!-- Modal content -->
+        <div class="loading-modal-content" style="padding: 0;width: 75%;">
+            <div class="" style="padding: 1em;border-bottom: 1px solid #dbd9da;color: #999999;">
+                <div class="">
+                    请输入6位交易密码
+                </div>
+                <div class="hui-flex" style="margin-top:10px;">
+                    <input type="password" id="tpswd" value="" style="font-size: 16px; height: 35px;width: 100%;padding: 2px 8px;background: #FFFFFF;">
+
+                </div>
+
+            </div>
+            <div class="hui-flex">
+                <div onclick="closeModal()" class="flex-1" style="text-align: center;padding: 1em;border-right: 1px solid #dbd9da;color: #999999;">
+                    取消
+                </div>
+                <div id="mmsure" class="flex-1" style="text-align: center;padding: 1em;color: #2C8EF3;">
+                    确定
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="../../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+    
+    $(function () {
+
+        FastClick.attach(document.body);
+        var data={
+            amount:GetQueryString("a"),
+            rate:GetQueryString("r"),
+            periods:GetQueryString("p"),
+            scenesText:utf8to16(decode64(GetQueryString("sd"))),
+            scenes:GetQueryString("s"),
+            contractId:GetQueryString("cid")
+        }
+        if(!data.amount||!data.rate||!data.periods||!data.scenes||!data.contractId){
+            error("必要参数不能为空");
+            return;
+        }else{
+            initDom({
+                amount:GetQueryString("a"),
+                rate:GetQueryString("r"),
+                periods:GetQueryString("p"),
+                scenes:GetQueryString("s"),
+                contractId:GetQueryString("cid")
+            });
+            initData(data);
+            getBankCard();
+            getData(data);
+        }
+    })
+    
+    
+    function initDom(data) {
+        $('#bor_btn').click(function() {
+            $('#moneyModal').show();
+        });
+
+
+        $('#mmsure').click(function() {
+            var tpswd=$("#tpswd").val();
+            if(!validateTpwdCode(tpswd)){
+                $("#tpswd").focus();
+                return;
+            }
+            closeModal();
+            data.tradePassword = tpswd;
+            if(localStorage.caiweiObj){
+                var caiweiObj=JSON.parse(localStorage.caiweiObj);
+                data.userId=caiweiObj.userId;
+            }else{
+                error("用户不能为空");
+                return;
+            }
+            setTimeout(function() {
+                withdraw(data);
+            }, 200);
+            return false;
+        });
+    }
+    function withdraw(data) {
+        data.contractId=GetQueryString("cid");
+        asyncSerDataWithHeader('/wechat/borrow/api/withdraw.shtml', data, afterApply, '提现申请');
+    }
+
+    function afterApply(data) {
+        if(data.success) {
+            window.location.href = "applysuccess.html?timeStamp="+getTimeStamp();
+        } else {
+            error(data.message);
+        }
+    }
+
+    function initData(data) {
+        $("#amount").text(data.amount);
+        $("#mscene").text(data.scenesText);
+        $("#periods").text(data.periods+"期");
+
+    }
+
+    function getData(data) {
+        if(localStorage.caiweiObj){
+            var caiweiObj=JSON.parse(localStorage.caiweiObj);
+            var param={
+                "amount": data.amount,
+                "userId": caiweiObj.userId
+            }
+            $('#myModal').show();
+            postSerDataWithHeader('/wechat/borrow/api/repayPlanList.shtml', param, initPlanData, '微信授权');
+        }
+    }
+    
+    function initPlanData(data) {
+        if(data.success){
+            initTable(data.data.items);
+        }else{
+            error(data.message);
+        }
+        $('#myModal').hide();
+    }
+
+    function initTable(data) {
+        var totalMoeny=0;
+        var periods=GetQueryString("p");
+        for(var i=0;i<data.length;i++){
+            if(data[i].periods==periods){
+                $("#fristRePay").text(data[i].current_repay_amount);
+                $("#current_repay_date").text(getDateFormatStr(new Date(Number(data[i].current_repay_date))));
+                var planList=data[i].plans;
+                for(var j=0;j<planList.length;j++){
+                    totalMoeny+=Number(planList[j].amount);
+                }
+                $("#totalMoeny").text(totalMoeny.toFixed(2));
+            }
+        }
+    }
+
+    function getBankCard() {
+        if(localStorage.caiweiObj){
+            var caiweiObj=JSON.parse(localStorage.caiweiObj);
+            setTimeout(function(){
+                postSerDataWithHeader('/wechat/borrow/api/getBankCardInfo.shtml', {
+                    "id":caiweiObj.userId
+                }, function (data) {
+                    if(data.success){
+                        var cardNo=data.data.cardNo;
+                        var value=data.data.bank+"("+cardNo.substr(cardNo.length-4)+")";
+                        $("#account").text(value);
+                    }
+                }, '初始化银行');
+            },200);
+        }
+    }
+    function error(msg){
+        $("body").append('<div class="error"><span class="error_msg"></span></div>');
+        $(".error").show();
+        $(".error_msg").html(msg);
+        setTimeout(function(){
+            $(".error").remove();
+        },1500);
+    }
+    function closeModal() {
+        $('#moneyModal').hide();
+        $("#tpswd").val("");
+    }
+</script>
+
+</body>
+
+</html>

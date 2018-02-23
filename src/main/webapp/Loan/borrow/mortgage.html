@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">	
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>车位</title>
+		<link rel="stylesheet" type="text/css" href="../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../css/huiflex.css" />
+		<link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+		<style type="text/css">
+			@font-face {
+				font-family: "iconfont";
+				src: url('../css/iconfont.ttf') format('truetype')/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+			}
+			
+			.iconfont {
+				font-family: "iconfont" !important;
+				font-size: 16px;
+				font-style: normal;
+				-webkit-font-smoothing: antialiased;
+				-webkit-text-stroke-width: 0.2px;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			
+			.icon {
+				display: inline-block;
+				min-width: 18px;
+				height: 18px;
+				color: #2c8ef3;
+				margin-right: 5px;
+			}
+			
+			body {
+				color: #333;
+			}
+			
+			.inputbg {
+				padding: 12px 15px;
+				border-bottom: 1px solid #dbd9da;
+			}
+			
+			.inputbg input {
+				text-align: right;
+				font-size: 16px;
+				width: 100px;
+				outline: none;
+				border: none;
+			}
+			
+			.btn {
+				background: #2c8ef3;
+				text-align: center;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border-radius: 6px;
+				margin: 25px;
+				margin-top: 35px;
+			}
+			
+			.fc {
+				color: #999999;
+			}
+			
+			.unit {
+				margin-left: 5px;
+				font-size: 16px;
+			}
+			
+			.dlist {
+				height: 175px;
+				overflow-y: scroll;
+				overflow-x: hidden;
+			}
+			
+			.dlist>li {
+				text-align: center;
+				padding: 15px 5px;
+				border-bottom: 1px solid #DBD9DA;
+			}
+
+			.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+			.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+		</style>
+	</head>
+
+	<body>
+		<form action="" id="dyform">
+			<div class="" style="background: white;">
+				<div id="dyCitybtn" class="hui-flex justify-between inputbg">
+					<div id="">车库所在城市</div>
+					<div class="fc" data-val="5"><span id="dCity" style="color: #2C8EF3;">选择城市</span> ></div>
+					<input type="hidden" maxlength="100" name="dyCity" id="dyCity" value="" data-alert="请选择车库所在城市"/>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="">车库具体地址</div>
+					<input type="text" maxlength="30" name="dyCommunity" id="dyCommunity" placeholder="输入所在小区名称" value="" style="" class="flex-1" data-alert="车库具体地址不能为空"/>
+				</div>
+			</div>
+
+			<div class="" style="background: white;margin-top: 15px;">
+				<div class="hui-flex inputbg">
+					<div id="">车库面积</div>
+					<input type="number" maxlength="3" name="dyArea" id="dyArea" value="" style="" class="flex-1" placeholder="例如:12" data-alert="车库面积不能为空"/>
+					<div class="fc unit"> 平米 </div>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="">购入时间</div>
+					<input type="number" maxlength="4" name="dyBuyYear" id="dyBuyYear" value="" style="" class="flex-1" placeholder="例如:2000" data-alert="购入时间不能为空"/>
+					<div class="fc unit"> 年 </div>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="">购入价格(/万元)</div>
+					<input type="number" maxlength="3" name="dyBuyPrice" id="dyBuyPrice" value="" style="" class="flex-1" placeholder="例如:15" data-alert="购入价格不能为空"/>
+					<div class="fc unit"> 万元 </div>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="">当前市价(/万元)</div>
+					<input type="number" maxlength="3" name="newPrice" id="newPrice" value="" style="" class="flex-1" placeholder="例如:50" data-alert="车库当前市价不能为空"/>
+					<div class="fc unit"> 万元 </div>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="">我要借(/万元)</div>
+					<input type="number" maxlength="3" name="borrowAmount" id="borrowAmount" value="" style="" class="flex-1" placeholder="例如:40" data-alert="要借款金额不能为空"/>
+					<div class="fc unit"> 万元 </div>
+				</div>
+			</div>
+		</form>
+
+		<div class="" style="width: 100%;">
+			<div class="btn" style="" id="bor_btn">
+				下一步
+			</div>
+		</div>
+
+		<div id="myModal" class="loading-modal" style="display: none;">
+			<!-- Modal content -->
+			<div class="loading-modal-content">
+				<img src="../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+				<span id="" style="vertical-align: middle;margin-left: 1em">
+					数据加载中...
+				</span>
+			</div>
+		</div>
+
+		<div id="dycityModal" class="loading-modal" style="display: none;">
+			<!-- Modal content -->
+			<div class="loading-modal-content " style="width: 75%;">
+				<div class="" style="text-align: left;border-bottom: 1px solid #A9C8E8;padding: 10px;font-weight: bold;">
+					车库所在城市
+				</div>
+				<div class="">
+					<ul class="dlist">
+					</ul>
+				</div>
+
+			</div>
+		</div>
+
+
+		<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var dycity;
+			var reg=/^[0-9]*$/;
+			$(function() {
+				var id=GetQueryString("mid")
+				if(id){
+					getDcity();
+					getData(id);
+				}else{
+					getDcity();
+				}
+				
+
+//				initCity(city);
+				initEvent();
+			});
+
+			function getDcity() {
+				$('#myModal').show();
+				postSerDataWithHeader('/wechat/user/api/basecodeList.shtml', {
+					"id": "dy_city"
+				}, initCity, '车库城市');
+				$('#myModal').hide();
+			}
+			
+			function getData(id){
+				$('#myModal').show();
+				postSerDataWithHeader('/wechat/borrow/api/info.shtml', {
+					"id": id
+				}, initData, '车库城市');
+				$('#myModal').hide();
+			}
+			
+			
+			function initData(data){
+				if(data.success){
+					$('#dyCommunity').val(data.data.dyCommunity);
+					$('#dyArea').val(Number(data.data.dyArea));
+					$('#dyBuyYear').val(data.data.dyBuyYear);
+					$('#dyBuyPrice').val(Number(data.data.dyBuyPrice)/10000);
+					$('#newPrice').val(Number(data.data.newPrice)/10000);
+					$('#borrowAmount').val(Number(data.data.borrowAmount)/10000);
+					for (var i = 0; i < dycity.length; i++) {
+						if(dycity[i].code==data.data.dyCity){
+							$('#dCity').text(dycity[i].descript);
+							$('#dyCity').val(dycity[i].code);
+							return;
+						}
+					}
+				}else{
+                    error(data.message);
+				}
+			}
+			
+			function getJson(sArr) {
+				var serializeObj = {};
+				console.log(sArr);
+				$(sArr).each(function() {
+					serializeObj[this.name] = this.value;
+					
+				});
+				console.log(serializeObj);
+				return serializeObj;
+			}
+			
+			function checkData(sArr){
+				for (var i = 0; i < sArr.length; i++) {
+//					if(sArr[i].value.length<=0){
+//						alert($('#'+sArr[i].name).attr("data-alert"));
+//						return false;
+//					} 
+					if(sArr[i].value.length<=0||sArr[i].value<=0){
+                        error($('#'+sArr[i].name).attr("data-alert"));
+						return false;
+					} 
+					if(sArr[i].value.length>$('#'+sArr[i].name).attr("maxlength")){
+						var divlabel=$('#'+sArr[i].name).prev('div')[0].outerText;
+                        error(divlabel+"输入最大不能超过"+$('#'+sArr[i].name).attr("maxlength")+"位");
+						return false;
+					}
+					if(sArr[i].name=="dyBuyYear"){
+						if(new Date().getFullYear()<new Date(sArr[i].value).getFullYear()||new Date(sArr[i].value).getFullYear()<1950){
+							var divlabel=$('#'+sArr[i].name).prev('div')[0].outerText;
+                            error(divlabel+"输入日期有误");
+							return false;
+						}
+					}
+					
+				}
+				return true;
+			}
+			
+			function checkReg(){
+				
+			}
+
+			function initCity(data) {
+				if(data.success) {
+					dycity=data.data.items;
+					var items = data.data.items;
+					for(var i = 0; i < items.length; i++) {
+						(function() {
+							var k=i;
+							var item = items[k];
+							var li = $("<li>" + item.descript + "</li>");
+							$(li).click(function() {
+								$('#dCity').text(item.descript);
+								$('#dyCity').val(item.code);
+								$('#dycityModal').hide();
+							});
+							$('.dlist').append(li);
+						})()
+					}
+
+				} else {
+                    error(data.message);
+				}
+			}
+
+			function initEvent() {
+				$('#dyCitybtn').click(function() {
+					if(!dycity) {
+						getDcity();
+					}
+					$('#dycityModal').show();
+				});
+				//下一步
+				$('#bor_btn').click(function() {
+					if(checkData($('#dyform').serializeArray())){
+						apply();
+					}
+				});
+			}
+
+			function apply() {
+				if(localStorage.caiweiObj) {
+					var caiweiObj = JSON.parse(localStorage.caiweiObj);
+					var param=getJson($('#dyform').serializeArray());
+					param.userId=caiweiObj.userId;
+					$('#myModal').show();
+					setTimeout(function(){
+						postSerDataWithHeader('/wechat/borrow/api/mortgage/apply.shtml', param, afterApply, '抵押材料');
+						$('#myModal').hide();
+					},200);
+					
+				} else {
+                    error("微信授权过期");
+					return;
+				}
+			}
+
+			function afterApply(data) {
+				if(data.success){//"id":14
+					window.location.href="mortgagephoto.html?mid="+data.data.id+"&timeStamp="+getTimeStamp();
+				} else {
+                    error(data.message);
+				}
+			}
+
+            function error(msg){
+                $("body").append('<div class="error"><span class="error_msg"></span></div>');
+                $(".error").show();
+                $(".error_msg").html(msg);
+                setTimeout(function(){
+                    $(".error").remove();
+                },1500);
+            }
+		</script>
+
+	</body>
+
+</html>

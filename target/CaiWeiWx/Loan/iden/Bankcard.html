@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>紧急联系人</title>
+		<link rel="stylesheet" type="text/css" href="../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../css/huiflex.css" />
+		<link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+		<style type="text/css">
+			@font-face {
+				font-family: "iconfont";
+				src: url('../css/iconfont.ttf') format('truetype')/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+			}
+			
+			.iconfont {
+				font-family: "iconfont" !important;
+				font-size: 16px;
+				font-style: normal;
+				-webkit-font-smoothing: antialiased;
+				-webkit-text-stroke-width: 0.2px;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			
+			.icon {
+				display: inline-block;
+				min-width: 18px;
+				height: 18px;
+				color: #2c8ef3;
+				margin-right: 5px;
+			}
+			
+			body {
+				color: #333;
+			}
+			
+			.inputbg {
+				padding: 12px 15px;
+				border-bottom: 1px solid #dbd9da;
+			}
+			
+			.inputbg input {
+				text-align: right;
+				font-size: 18px;
+				outline: none;
+				border: none;
+			}
+			
+			.btn {
+				background: #2c8ef3;
+				text-align: center;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border-radius: 6px;
+				margin: 25px;
+				margin-top: 35px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<form action="" id="em_contact">
+			<!--<div id="" style="padding: 15px;font-size: 16px;">
+				卡号信息
+			</div>-->
+			<div class="" style="background: white;">
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 90px;">卡号</div>
+					<input type="" name="card_no" id="card_no" value="" style="" class="flex-1" disabled="disabled"/>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 90px;">银行</div>
+					<input type="" name="bank_name" id="bank_name" value="" style="" class="flex-1" disabled="disabled"/>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 90px;">持卡人姓名</div>
+					<input type="" name="id_holder" id="id_holder" value="" style="" class="flex-1" /disabled="disabled">
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 90px;">证件类型</div>
+					<input type="" name="" id="" value="身份证" style="" class="flex-1" disabled="disabled"/>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 90px;">证件号码</div>
+					<input type="" name="id_no" id="id_no" value=" " style="" class="flex-1" disabled="disabled"/>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 90px;">预留手机号码</div>
+					<input type="" name="mobile " id="mobile" value="" style="" class="flex-1" disabled="disabled" />
+				</div>
+			</div>
+		</form>
+
+		<div class="" style="position: fixed;bottom: 0;width: 100%;">
+			<div class="btn" style="" id="bor_btn">
+				确 认
+			</div>
+		</div>
+
+		<div id="myModal" class="loading-modal" style="display: none;">
+			<!-- Modal content -->
+			<div class="loading-modal-content">
+				<img src="../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+				<span id="" style="vertical-align: middle;margin-left: 1em">
+					数据加载中...
+				</span>
+			</div>
+		</div>
+
+		<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			console.log($('#em_contact').serializeArray());
+
+			$(function() {
+				if(localStorage.caiweiObj){
+					var caiweiObj=JSON.parse(localStorage.caiweiObj);
+					getBankCardInfo(caiweiObj);
+				}else{
+					alert("微信授权过期");
+					return;
+				}
+//				initData(bankdata)
+			});
+
+			var bankdata = {
+				"code": 200,
+				"message": "success",
+				"success": true,
+				"data": {
+					"id": null,
+					"userId": null,
+					"bank": "中国农业银行",
+					"cardNo": "6228480329159872475",
+					"phone": "18238727757",
+					"agreeNo": "201711271629201000008594512",
+					"bindTime": null,
+					"id_holder": "江凯宁",
+					"id_no": "41140319911215723X",
+					"signResult": null,
+					"bankCode": null,
+					"channel": null
+				}
+			}
+			
+			function getBankCardInfo(caiweiObj){
+				$('#myModal').show();
+				postSerData('/wechat/borrow/api/getBankCardInfo.shtml', {
+					"id":caiweiObj.userId
+				}, initData, '初始化');
+				$('#myModal').hide();
+			}
+			
+			function initData(data){
+				if(data.success){
+					$('#card_no').val(toXXX(data.data.cardNo));
+					$('#bank_name').val(data.data.bank);
+					$('#id_holder').val(data.data.id_holder);
+					$('#id_no').val(toXXX(data.data.id_no));
+					$('#mobile').val(toXXX(data.data.phone,1));
+				}else {
+					alert(data.message)
+				}
+				
+			}
+			
+			function toXXX(str,num){
+				var strXX="";
+				if(num){
+					for (var i = 0; i < str.length-7; i++) {
+						strXX+="*";
+					}
+					str=str.substring(0,3)+strXX+str.substring(str.length-4,str.length);
+				}else{
+					for (var i = 0; i < str.length-8; i++) {
+						strXX+="*";
+					}
+					str=str.substring(0,4)+strXX+str.substring(str.length-4,str.length);
+				}
+				return str;
+			}
+
+			function getJson(sArr) {
+				var serializeObj = {};
+				console.log(sArr);
+				$(sArr).each(function() {
+					serializeObj[this.name] = this.value;
+				});
+				console.log(serializeObj);
+				return serializeObj;
+			}
+		</script>
+
+	</body>
+
+</html>

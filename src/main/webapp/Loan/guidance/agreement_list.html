@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,minimum-scale=1.0, user-scalable=no">
+	<title>合同及相关协议</title>
+	<script type="text/javascript" src="js/jquery.js" ></script>
+	<link rel="stylesheet" type="text/css" href="css/l_mobile.css"/>
+	<link rel="stylesheet" type="text/css" href="css/iconfont.css"/>
+</head>
+<body>
+<ul class="menu">
+	<a ><li class="menu-list">1、融资租赁申请书<i class="iconfont icon-gengduo icon-right"></i></li></a>
+	<a ><li class="menu-list">2、融资租赁合同-最高额<i class="iconfont icon-gengduo icon-right"></i></li></a>
+	<a ><li class="menu-list">3、租赁物转让协议<i class="iconfont icon-gengduo icon-right icon-right"></i></li></a>
+	<a ><li class="menu-list">4、划款授权协议书<i class="iconfont icon-gengduo icon-right icon-right"></i></li></a>
+	<a ><li class="menu-list">5、租赁物交付确认书<i class="iconfont icon-gengduo icon-right icon-right"></i></li></a>
+	<a ><li class="menu-list">6、取回标的物同意书<i class="iconfont icon-gengduo icon-right icon-right"></i></li></a>
+	<a ><li class="menu-list">7、应收租赁款债权转让确认书<i class="iconfont icon-gengduo icon-right icon-right"></i></li></a>
+</ul>
+</body>
+<script type="text/javascript">
+    (function ($) {
+        $.getUrlParam = function (name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return decodeURI(r[2]); return null;
+        }
+    })(jQuery);
+    $(function () {
+        var lis = $(".menu li");
+        for (var i=0;i<lis.length;i++) {
+            !function(j){
+                lis[j].onclick = function(){
+                    //alert("您点击了第"+(j+1)+"个li！");
+                    var type=j+1;
+                    var versionNumber=$.getUrlParam("versionNumber");
+                    var scenes=$.getUrlParam("scenes");
+                    var mobileType=$.getUrlParam("mobileType");
+                    var amount=$.getUrlParam("amount");
+                    var channelCode=$.getUrlParam("channelCode");
+                    var address=$.getUrlParam("address");
+                    var userId=$.getUrlParam("userId");
+                    var token=$.getUrlParam("token");
+                    var rate=$.getUrlParam("rate");
+                    var returnUrl=$.getUrlParam("returnUrl");
+                    var coordinate=$.getUrlParam("coordinate");
+                    var periods=$.getUrlParam("periods");
+
+                    var param={
+                        "versionNumber":versionNumber,
+                        "scenes": scenes,
+                        "mobileType": mobileType,
+                        "amount":amount,
+                        "channelCode":channelCode,
+                        "address":address,
+                        "userId":userId,
+                        "token": token,
+                        "rate": rate,
+                        "returnUrl":returnUrl,
+                        "coordinate":coordinate,
+                        "periods":periods,
+                        "type":type+""
+                    };
+
+                    var openId="";
+                    if(localStorage.caiweiWx){
+                       var caiweiWx=JSON.parse(localStorage.caiweiWx);
+                       if(caiweiWx){
+                           openId=caiweiWx.openId;
+					   }
+					}
+
+                    $.ajax({
+                        type:"post",
+						url:"/CaiWeiWx/wechat/user/api/getContractUrl.shtml",
+                        //url:"http://120.79.3.114:11000/api/contract/getContractUrl",
+                        headers:{
+                            openId:openId
+                        },
+                        datType: "JSON",
+                        contentType:'application/json',
+                        data:JSON.stringify(param),
+                        success:function(data){
+                            window.location=data.data.url;
+                            try{
+                                window.CreditContractListClick(data.data.contractId);
+                            }catch(e){
+                                CW.contractId(data.data.contractId);
+                            }
+
+                        },
+                        error:function(){
+                            alert("请求出错！");
+                        }
+                    });//ajax-end
+                }
+            }(i);
+        }
+
+
+    });//ready-end
+</script>
+</html>

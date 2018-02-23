@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">	
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>预生成归还计划</title>
+		<link rel="stylesheet" type="text/css" href="../../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/huiflex.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/loadingm.css"/>
+		<style type="text/css">
+			body {
+				color: #999999;
+				background: white;
+			}
+			
+			.inputbg {
+				padding: 12px 15px;
+			}
+			
+			.btn {
+				background: #2c8ef3;
+				text-align: center;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border-radius: 6px;
+				margin: 10px 25px;
+			}
+			
+			.numicon {
+				width: 20px;
+				height: 20px;
+				border-radius: 10px;
+				border: 1px dashed #999988;
+				padding: 0 5px;
+			}
+			
+			.numlabel {
+				width: 40px;
+				text-align: center;
+			}
+			
+			.datelabel {
+				width: 52px;
+				padding: 0 5px;
+			}
+			
+			.cyclepar {
+				font-size: 0px;
+				width: 12px;
+				height: 60px;
+			}
+			
+			.fb {
+				color: #333;
+			}
+
+			.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+			.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+		</style>
+	</head>
+
+	<body>
+		<div id="mainPage" style="display: none">
+			<div class="" style="background: #F6F6F6;">
+				<div class="hui-flex inputbg">
+					<span id="" style="width: 75px;">分期周期：</span>
+					<!--<span id="repay_date" class="fb">2017.10.11-2018.3.11</span>-->
+					<span id="repay_date" class="fb"></span>
+				</div>
+				<div class="hui-flex inputbg">
+					<span id="" style="width: 75px;">申请金额：</span>
+					<span class="fb">￥<span id="amount" >0.00</span></span>
+				</div>
+				<div class="hui-flex inputbg">
+					<span id="" style="width: 75px;">分期期数：</span>
+					<span class="fb"><span id="periods">0</span>个月</span>
+				</div>
+				<div class="hui-flex inputbg">
+					<span id="" style="width: 75px;">日 费 率：</span>
+					<span class="fb"><span id="rate">0</span>%</span>
+				</div>
+
+			</div>
+
+			<div id="installment" class="" style="color: #999999;">
+			</div>
+			<div class="" style="margin-bottom: 65px;"></div>
+			<div style="position: fixed;bottom: 0;width: 100%;background: #F6F6F6;">
+				<div id="back" class="btn">
+					返 回
+				</div>
+			</div>
+		</div>
+		
+		<div id="myModal" class="loading-modal" >
+			<!-- Modal content -->
+			<div class="loading-modal-content">
+				<img src="../../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+				<span id="" style="vertical-align: middle;margin-left: 1em;color: #333;">
+					数据加载中...
+				</span>
+			</div>
+		</div>
+
+		<script src="../../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function() {
+				FastClick.attach(document.body);
+				var amount=GetQueryString("a");
+				var id=GetQueryString("id");
+				var rate=GetQueryString("r");
+				var periods=GetQueryString("p");
+				if(!amount||!id||!rate||!periods){
+					error("必要参数不存在");
+					return;
+				}
+				getData({
+					"amount": amount,
+					"periods": periods,
+					"rate": rate,
+					"id": utf8to16(decode64(id))
+				});
+				initEvent();
+			});
+			
+			function getData(param) {
+				$('#myModal').show();
+				setTimeout(function() {
+					postSerDataWithHeader('/wechat/borrow/api/mortgage/repayPlanDetail.shtml', param, initData, '初始化');
+					$('#myModal').hide();
+				}, 200);
+			}
+
+			function initData(data) {
+				if(data.success) {
+					data = data.data;
+					$('#mainPage').show();
+					$('#repay_date').text(getDateFormatStr(new Date(data.first_repay_date), "yyyy.MM.dd") + " - " + getDateFormatStr(new Date(data.end_repay_date), "yyyy.MM.dd"));
+					$('#amount').text(Number(data.amount).toFixed(2));
+					$('#rate').text(new Number(data.rate));
+					$('#periods').text(data.periods);
+
+					for(var i = 0; i < data.plans.length; i++) {
+						(function() {
+							var imgSrc = "";
+							if(i == 0) {
+								imgSrc = "../../img/cy1.png"
+							} else if(i == data.plans.length - 1) {
+								imgSrc = "../../img/cy3.png"
+							} else {
+								imgSrc = "../../img/cy2.png"
+							}
+							var html = '<div class="hui-flex align-center" style="height: 60px;">' +
+								'<div id="" class="hui-flex">' +
+								'<div id="" class="numlabel">' +
+								'<span class="numicon">' + (i + 1) + '</span>' +
+								'</div>' +
+								'<div id="" class="datelabel">' + (getDateFormatStr(new Date(data.plans[i].repayDate), "MM.dd")) + '</div>' +
+								'</div>' +
+								'<div class="cyclepar" style="">' +
+								'<img src="' + imgSrc + '" style="height: 60px;font-size: 0px;" />' +
+								'</div>' +
+								'<div class="" style="margin-left: 10px;">' +
+								'<div class="fb" style="font-size: 16px;">' + Number(data.plans[i].amount).toFixed(2) + '</div>' +
+								'<div class="" style="font-size: 14px;">含本期分期款' + Number(data.plans[i].realAmount).toFixed(2) + '元+本期息费' + Number(data.plans[i].interest).toFixed(2) + '元</div>' +
+								'</div>' +
+								'</div>'
+
+							$('#installment').append(html);
+						})()
+					}
+				} else {
+					error(data.message)
+				}
+				
+			}
+			
+			function initEvent() {
+				$('#back').click(function() {
+					history.go(-1);
+				});
+			}
+
+            function error(msg){
+                $("body").append('<div class="error"><span class="error_msg"></span></div>');
+                $(".error").show();
+                $(".error_msg").html(msg);
+                setTimeout(function(){
+                    $(".error").remove();
+                },1500);
+            }
+		</script>
+
+	</body>
+
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">	
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>借款</title>
+		<link rel="stylesheet" type="text/css" href="../css/base.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+		<link rel="stylesheet" type="text/css" href="../css/huiflex.min.css" />
+		<style type="text/css">
+			@font-face {
+				font-family: "iconfont";
+				src: url('../css/iconfont.ttf') format('truetype')/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+			}
+			
+			.iconfont {
+				font-family: "iconfont" !important;
+				font-size: 16px;
+				font-style: normal;
+				-webkit-font-smoothing: antialiased;
+				-webkit-text-stroke-width: 0.2px;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			
+			.icon {
+				display: inline-block;
+				min-width: 18px;
+				height: 18px;
+				color: #2c8ef3;
+				margin-right: 5px;
+			}
+			
+			body {
+				color: #333;
+				background: white;
+			}
+			
+			.btn {
+				background: #2c8ef3;
+				text-align: center;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border-radius: 6px;
+				margin: 15px;
+			}
+			
+			.fc {
+				color: #999999;
+			}
+			
+			.imgpar {
+				font-size: 17px;
+				float: left;
+				width: 5em;
+				height: 5em;
+				padding: .2em;
+				margin: .3em;
+				text-align: center;
+				background: #F6F6F6;
+			}
+			
+			.imgpar>img {
+				margin: 0px auto;
+				max-height: 100%;
+				max-width: 100%;
+			}
+
+			.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+			.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+			
+			.fr {}
+		</style>
+	</head>
+
+	<body>
+		<div class="" style="padding: 10px;font-size: 13px;background: #F6F6F6;">
+			<i class="icon iconfont fc">&#xe617;</i><span id="">请上传以下资产资料：</span>
+			<br /> <span style="margin-left: 23px;">购买车位的合同或发票、车位对应楼盘房产证(6张以内)</span>
+		</div>
+
+		<div class="fr" style="margin-bottom: 50px;">
+			<div class="imgpar" id="selectPhoto">
+				<img src="../img/camera.png" width="100%" style="margin: 10px auto;" />
+			</div>
+			<div id="picpar">
+
+			</div>
+			<div id="" style="clear: both;"></div>
+		</div>
+
+		<div class="" style="position: fixed;bottom: 0;width: 100%;background: #f6f6f6;">
+			<div class="btn" style="" id="bor_btn">
+				下一步
+			</div>
+		</div>
+
+		<div id="uploadModal" class="loading-modal" style="display: none;">
+			<!-- Modal content -->
+			<div class="loading-modal-content" style="padding: 0;width: 75%;">
+				<div class="" style="padding: 1em;text-align: center;border-bottom: 1px solid #dbd9da;color: #999999;">
+					<div class="" style="color: #2C8EF3;">
+						开始上传资料
+					</div>
+					<div style="margin-top: .8em;text-align: center;font-size: 14px;">
+						上传全程请保持网络通畅
+					</div>
+				</div>
+				<div class="hui-flex">
+					<div id="closeModal" class="flex-1" style="text-align: center;padding: 1em;border-right: 1px solid #dbd9da;color: #999999;">
+						取消
+					</div>
+					<div id="upload" class="flex-1" style="text-align: center;padding: 1em;color: #2C8EF3;">
+						上传
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div id="myModal" class="loading-modal" style="display: none;">
+			<!-- Modal content -->
+			<div class="loading-modal-content">
+				<img src="../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+				<span id="msgtext" style="vertical-align: middle;margin-left: 1em">
+					数据加载中...
+				</span>
+			</div>
+		</div>
+		<div id="errModal" class="loading-modal" style="display: none;z-index: 99;">
+			<!-- Modal content -->
+			<div class="loading-modal-content" style="padding: 0;width: 75%;">
+				<div class="" style="padding: 1em;text-align: center;border-bottom: 1px solid #dbd9da;color: #999999;">
+					<div class="" style="color: red;">
+						上传失败<i class="icon iconfont" style="color: red;font-size: 18px;margin-left: 5px;">&#xe617;</i>
+					</div>
+					<div class="" style="margin-top: 5px;">
+						请确保网络通畅！
+					</div>
+				</div>
+				<div class="hui-flex">
+					<div id="refresh" onclick="refresh()" class="flex-1" style="text-align: center;padding: 1em;color: #2C8EF3;">
+						刷新重试
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/plupload-2.1.2/js/plupload.full.min.js?vasun1988xs" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			function cal(w, size) {
+				var calh = document.body.clientWidth * size / w;
+				return parseInt(calh);
+			}
+
+			function calmargin(w, size) {
+
+				var marginSize = (document.body.clientWidth - cal(320, 17) * 18) / 2
+				return parseInt(marginSize)
+			}
+
+			function reSize() {
+				console.log("resize");
+				$('.imgpar').css("font-size", cal(320, 17) + "px");
+				$('.fr').css("margin-left", calmargin(320, 17));
+
+			}
+
+			function previewImage(file, callback) { //file为plupload事件监听函数参数中的file对象,callback为预览图片准备完成的回调函数
+				if(!file || !/image\//.test(file.type)) return; //确保文件是图片
+				if(file.type == 'image/gif') { //gif使用FileReader进行预览,因为mOxie.Image只支持jpg和png
+					var fr = new mOxie.FileReader();
+					fr.onload = function() {
+						callback(fr.result);
+						fr.destroy();
+						fr = null;
+					}
+					fr.readAsDataURL(file.getSource());
+				} else {
+					var preloader = new mOxie.Image();
+					preloader.onload = function() {
+						//preloader.downsize(550, 400);//先压缩一下要预览的图片,宽300，高300
+						var imgsrc = preloader.type == 'image/jpeg' ? preloader.getAsDataURL('image/jpeg', 80) : preloader.getAsDataURL(); //得到图片src,实质为一个base64编码的数据
+						callback && callback(imgsrc); //callback传入的参数为预览图片的url
+						preloader.destroy();
+						preloader = null;
+					};
+					preloader.load(file.getSource());
+				}
+			}
+
+			function get_signature() {
+				//可以判断当前expire是否超过了当前时间,如果超过了当前时间,就重新取一下.3s 做为缓冲
+				now = timestamp = Date.parse(new Date()) / 1000;
+				if(expire < now + 3) {
+					$.ajax({
+						type: 'get',
+						url: getPreUrl() + "/wechat/oss/getPostPolicy.shtml",
+						data: {
+							"key": "mortgage/",
+							"exp": 3600000
+						},
+						dataType: 'json',
+						timeout: 30000,
+						async: false,
+						success: function(data) {
+							console.log(data);
+							if(data == null) {
+								error('服务器太拥挤，请稍后再试');
+							} else {
+								host = data['host']
+								policyBase64 = data['policy']
+								accessid = data['accessid']
+								signature = data['signature']
+								expire = parseInt(data['expire'])
+								callbackbody = data['callback']
+								key = data['dir']
+							}
+						},
+						error: function(xhr, type) {
+							error('网络不稳定，获取数据失败 ');
+						}
+					});
+
+					//					var obj = {
+					//						"accessid": "LTAIiMyGlhgxlLBX",
+					//						"policy": "eyJleHBpcmF0aW9uIjoiMjAxNy0xMi0wNlQxMDo1MjozMi4zNjdaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsMTA0ODU3NjAwXSxbInN0YXJ0cy13aXRoIiwiJGtleSIsInRlc3QzLyJdXX0=",
+					//						"signature": "4+s9kSwSNId20sYprYUUEqTOPJU=",
+					//						"dir": "test3/",
+					//						"host": "http://caiwei.oss-cn-hangzhou.aliyuncs.com",
+					//						"expire": "1512557552"
+					//					}
+					//					host = obj['host']
+					//					policyBase64 = obj['policy']
+					//					accessid = obj['accessid']
+					//					signature = obj['signature']
+					//					expire = parseInt(obj['expire'])
+					//					callbackbody = obj['callback']
+					//					key = obj['dir']
+
+					return true;
+				}
+				return false;
+			};
+
+			function random_string(len) {　　
+				len = len || 32;　　
+				var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';　　
+				var maxPos = chars.length;　　
+				var pwd = '';　　
+				for(i = 0; i < len; i++) {　　
+					pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+				}
+				return pwd;
+			}
+
+			function get_suffix(filename) {
+				pos = filename.lastIndexOf('.')
+				suffix = ''
+				if(pos != -1) {
+					suffix = filename.substring(pos)
+				}
+				return suffix;
+			}
+
+			function calculate_object_name(filename) {
+				if(g_object_name_type == 'local_name') {
+					g_object_name += "${filename}"
+				} else if(g_object_name_type == 'random_name') {
+					suffix = get_suffix(filename)
+					var timestamp = new Date().getTime();
+					g_object_name = key + timestamp + userid + random_string(2) + suffix
+				}
+				return ''
+			}
+
+			function get_uploaded_object_name(filename) {
+				if(g_object_name_type == 'local_name') {
+					tmp_name = g_object_name
+					tmp_name = tmp_name.replace("${filename}", filename);
+					return tmp_name
+				} else if(g_object_name_type == 'random_name') {
+					return g_object_name
+				}
+			}
+
+			function set_upload_param(up, file, ret) {
+				if(ret == false) {
+					ret = get_signature()
+				}
+				g_object_name = key;
+				if(file != '') {
+					var filename = file.name;
+					suffix = get_suffix(filename);
+					calculate_object_name(filename);
+					upfiles.push({
+						"id": file.id,
+						"filename": "/" + g_object_name
+					});
+				}
+				new_multipart_params = {
+					'key': g_object_name,
+					'policy': policyBase64,
+					'OSSAccessKeyId': accessid,
+					'success_action_status': '200', //让服务端返回200,不然，默认会返回204
+					'callback': callbackbody,
+					'signature': signature,
+				};
+
+				up.setOption({
+					'url': host,
+					'multipart_params': new_multipart_params
+				});
+
+				up.start();
+			}
+
+			function initUploader(btn, preview) {
+				var uploader = new plupload.Uploader({
+					runtimes: 'html5,flash,silverlight,html4',
+					browse_button: 'selectPhoto',
+					//					browse_button: btn,
+					multi_selection: true,
+					flash_swf_url: 'lib/plupload-2.1.2/js/Moxie.swf',
+					silverlight_xap_url: 'lib/plupload-2.1.2/js/Moxie.xap',
+					url: 'http://oss.aliyuncs.com',
+					filters: {
+						mime_types: [{ //只允许上传图片
+							title: "Image files",
+							extensions: "jpg,jpeg,gif,png,bmp"
+						}],
+						max_file_size: '60mb', //最大只能上传10mb的文件
+						prevent_duplicates: true //不允许选取重复文件
+					},
+					init: {
+
+						FilesAdded: function(up, files) {
+                            if(up.files.length>6) {
+								error("最多只能上传6张图片");
+								up.files.pop();
+								return;
+                            }
+
+							$(files).each(function(n, elm) {
+								previewImage(elm, function(imgSrc) {
+									var imgpar = $('<div class="imgpar"></div>');
+									imgpar.css("font-size", cal(320, 17) + "px");
+									var img = $('<img src="" />');
+									$(img).attr("src", imgSrc);
+									imgpar.append(img);
+									$('#picpar').append(imgpar);
+								});
+
+							});
+
+						},
+
+						BeforeUpload: function(up, file) {
+							console.log("BeforeUpload");
+							set_upload_param(up, file, true);
+						},
+
+						UploadProgress: function(up, file) {
+							console.log("UploadProgress id:" + file.id + "::" + file.percent + "%");
+						},
+
+						FileUploaded: function(up, file, info) {
+							console.log("FileUploaded");
+							if(info.status == 200) {
+								dofinish(file)
+								console.log("success id:" + file.id + "::" + file.percent + "%");
+							} else {
+								errorRefresh();
+								console.log("failed id:" + file.id + "::" + info.response);
+							}
+						},
+
+						Error: function(up, err) {
+							console.log(err);
+							if(err.code == -600) {
+								error("选择的文件太大了,可以根据应用情况，在upload.js 设置一下上传的最大大小");
+							} else if(err.code == -601) {
+								error("选择的文件后缀不对,可以根据应用情况，在upload.js进行设置可允许的上传文件类型");
+							} else if(err.code == -602) {
+								error("这个文件已经上传过一遍了");
+							} else {
+								errorRefresh();
+								error("Error xml:" + err.response);
+							}
+						}
+					}
+				});
+				uploader.init();
+				return uploader;
+			}
+			var upfiles = [];
+			var uploadedFiles = [];
+			var uploader;
+			var userid = 0,
+				mid = 0,
+				accessid = '',
+				accesskey = '',
+				host = '',
+				policyBase64 = '',
+				signature = '',
+				callbackbody = '',
+				filename = '',
+				key = '',
+				expire = 0,
+				g_object_name = '',
+				g_object_name_type = 'random_name',
+				now = timestamp = Date.parse(new Date()) / 1000;
+
+			function dofinish(file) {
+				uploadedFiles.push(file);
+				if(uploadedFiles.length == uploader.files.length) {
+					var urls = [];
+					for(var i = 0; i < upfiles.length; i++) {
+						urls.push(upfiles[i].filename)
+					}
+					console.log(urls);
+					$('#myModal').hide();
+					var param = {
+						"cat": "A",
+						"mid": mid,
+						"url": urls,
+						"userId": userid
+					}
+					postPicdata(param);
+					console.log("全部上传完毕！");
+				}
+			}
+
+			$(function() {
+				reSize();
+				window.onresize = reSize();
+				mid = GetQueryString("mid");
+				if(!mid || mid.length <= 0) {
+					error("必要参数为空！");
+					return;
+				}
+
+				if(localStorage.caiweiObj) {
+					var caiweiObj = JSON.parse(localStorage.caiweiObj);
+					userid = caiweiObj.userId;
+				} else {
+					error("微信授权过期");
+					return;
+				}
+				uploader = initUploader();
+				initEvent();
+			})
+
+			function errorRefresh() {
+				$('#myModal').hide();
+				$('#errModal').show();
+			}
+
+			function refresh() {
+				window.location.reload();
+			}
+
+			function initEvent() {
+				$('#bor_btn').click(function() {
+					$('#uploadModal').show();
+				});
+
+				$('#closeModal').click(function() {
+					$('#uploadModal').hide();
+				});
+				$('#upload').click(function() {
+					$('#uploadModal').hide();
+					$('#msgtext').text("图片上传中...");
+					$('#myModal').show();
+					set_upload_param(uploader, '', false);
+				});
+			}
+
+			function postPicdata(param) {
+				$('#myModal').show();
+				setTimeout(function(){
+					postSerDataWithHeader('/wechat/borrow/api/upImage.shtml', param, afterUploader, '初始化期限');
+					$('#myModal').hide();
+				},200);
+				
+			}
+
+			function afterUploader(data) {
+				if(data.success){
+					window.location.href="parkingLot.html"+"?timeStamp="+getTimeStamp();
+				}else{
+					error(data.message)
+				}
+			}
+
+            function error(msg){
+                $("body").append('<div class="error"><span class="error_msg"></span></div>');
+                $(".error").show();
+                $(".error_msg").html(msg);
+                setTimeout(function(){
+                    $(".error").remove();
+                },1500);
+            }
+		</script>
+	</body>
+
+</html>

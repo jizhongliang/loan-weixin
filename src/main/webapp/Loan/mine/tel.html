@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+    <META HTTP-EQUIV="expires" CONTENT="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="format-detection" content="telephone=no,date=no,address=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>我的</title>
+    <link rel="stylesheet" type="text/css" href="../css/base.css" />
+    <link rel="stylesheet" type="text/css" href="../css/huiflex.css" />
+    <link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+    <style type="text/css">
+
+    </style>
+</head>
+    <body>
+        <div id="CustomerModal" class="loading-modal">
+            <div class="loading-modal-content" style="padding: 0;width: 75%;">
+                <div class="" style="padding: 1em;text-align: center;border-bottom: 1px solid #dbd9da;color: #999999;">
+                    <div  style="text-align:center;font-size: 16px;color:#000000;font-weight: bold;margin: 10px auto;" id="CustomerModalLabel">
+
+                    </div>
+                </div>
+                <div class="hui-flex">
+                    <div onclick="closeCustomerModal()" class="flex-1" style="text-align: center;padding: 1em;border-right: 1px solid #dbd9da;color: #2C8EF3;">
+                        取消
+                    </div>
+                    <div id="CustomerModalTel" class="flex-1" style="text-align: center;padding: 1em;color: #2C8EF3;">
+                        呼叫
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+            $(function () {
+                var tel=localStorage.mineTelPhone;
+                var telHtml="<a style='color: #2C8EF3;' href='tel:"+tel+"'>呼叫</a>";
+                $("#CustomerModalLabel").html(tel);
+                $("#CustomerModalTel").html(telHtml);
+            })
+
+        </script>
+    </body>
+</html>

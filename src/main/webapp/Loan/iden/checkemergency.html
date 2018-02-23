@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>紧急联系人</title>
+		<link rel="stylesheet" type="text/css" href="../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../css/huiflex.css" />
+		<link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+		<style type="text/css">
+			body {
+				color: #333;
+			}
+			
+			.inputbg {
+				padding: 12px 15px;
+				border-bottom: 1px solid #dbd9da;
+			}
+			
+			.inputbg input {
+				text-align: right;
+				font-size: 18px;
+				outline: none;
+				border: none;
+			}
+			
+			.btn {
+				background: #2c8ef3;
+				text-align: center;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border-radius: 6px;
+				margin: 25px;
+				margin-top: 35px;
+			}
+			.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+			.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+		</style>
+	</head>
+
+	<body>
+		<form action="" id="em_contact">
+			<div id="" style="padding: 15px;font-size: 16px;">
+				直系亲属
+			</div>
+			<div class="" style="background: white;">
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 75px;">与本人关系</div>
+					<input type="" name="" id="relate1" value="" style="" class="flex-1" disabled="disabled"/>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 75px;">姓名</div>
+					<input type="" name="" id="name1" value="" style="" class="flex-1" disabled="disabled"/>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 75px;">手机号码</div>
+					<input type="" name="" id="phone1" value="" style="" class="flex-1" disabled="disabled"/>
+				</div>
+			</div>
+			<div id="" style="padding: 15px;font-size: 16px;">
+				其他联系人
+			</div>
+			<div class="" style="background: white;">
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 75px;">与本人关系</div>
+					<input type="" name="" id="relate2" value="" style="" class="flex-1" disabled="disabled"/>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 75px;">姓名</div>
+					<input type="" name="" id="name2" value="" style="" class="flex-1" disabled="disabled"/>
+				</div>
+				<div class="hui-flex inputbg">
+					<div id="" style="width: 75px;">手机号码</div>
+					<input type="" name="" id="phone2" value="" style="" class="flex-1" disabled="disabled"/>
+				</div>
+			</div>
+		</form>
+
+		<div style="position: fixed;bottom: 0;width: 100%;">
+			<div id="back" class="btn" >
+				返 回
+			</div>
+		</div>
+
+		<div id="myModal" class="loading-modal" style="display: none;">
+			<!-- Modal content -->
+			<div class="loading-modal-content">
+				<img src="../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+				<span id="" style="vertical-align: middle;margin-left: 1em">
+					数据加载中...
+				</span>
+			</div>
+		</div>
+
+		<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+
+			
+			$(function(){
+				FastClick.attach(document.body);
+				$('#back').click(function(){
+					history.go(-1);
+				});
+				if(localStorage.caiweiObj){
+					var caiweiObj=JSON.parse(localStorage.caiweiObj);
+					getEmerContacts(caiweiObj);
+				}else{
+					error("微信授权过期");
+					return;
+				}
+
+			});
+			
+			function initData(data){
+				var items=data.data.items;
+				for (var i = 0; i < items.length; i++) {
+					if(items[i].type=="10"){
+						$('#relate1').val(items[i].relation);
+						$('#name1').val(items[i].name);
+						$('#phone1').val(items[i].phone);
+					}else{
+						$('#relate2').val(items[i].relation);
+						$('#name2').val(items[i].name);
+						$('#phone2').val(items[i].phone);
+					}
+				}
+			}
+			
+			function getEmerContacts(caiweiObj) {
+				$('#myModal').show();
+				
+				setTimeout(function(){
+					postSerDataWithHeader('/wechat/iden/api/getEmerContacts.shtml', {
+						"userId": caiweiObj.userId
+					}, initData, '初始化');
+					$('#myModal').hide();
+				},200);
+			}
+
+            function error(msg){
+                $("body").append('<div class="error"><span class="error_msg"></span></div>');
+                $(".error").show();
+                $(".error_msg").html(msg);
+                setTimeout(function(){
+                    $(".error").remove();
+                },1500);
+            }
+		</script>
+
+	</body>
+
+</html>

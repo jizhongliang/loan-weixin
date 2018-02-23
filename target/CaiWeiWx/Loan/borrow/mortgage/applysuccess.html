@@ -1,0 +1,98 @@
+<html>
+
+	<head>
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">  
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>提现</title>
+		<link rel="stylesheet" type="text/css" href="../../css/base.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/huiflex.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/loadingm.css" />
+		<style type="text/css">
+			@font-face {
+				font-family: "iconfont";
+				src: url('../../css/iconfont.ttf') format('truetype')/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+			}
+			
+			.iconfont {
+				font-family: "iconfont" !important;
+				font-size: 16px;
+				font-style: normal;
+				-webkit-font-smoothing: antialiased;
+				-webkit-text-stroke-width: 0.2px;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			
+			.icon {
+				display: inline-block;
+				min-width: 18px;
+				height: 18px;
+				color: #2c8ef3;
+				margin-right: 5px;
+			}
+			
+			body {
+				color: #333;
+			}
+			
+			.btn {
+				background: #2c8ef3;
+				text-align: center;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border-radius: 6px;
+				margin: 15px;
+			}
+			
+			.fc {
+				color: #999999;
+			}
+			
+			.check {
+				color: #2c8ef3;
+				border-bottom: 1px solid #2c8ef3;
+			}
+
+			.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+			.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+		</style>
+	</head>
+
+	<body>
+		<div id="applysuccess" style="">
+			<div class="" style="text-align: center;margin-top: 20%;margin-bottom: 10%;">
+				<i class="iconfont" style="font-size: 100px;color: #2c8ef3;">&#xe7be;</i>
+			</div>
+			<div class="" style="padding: 0 10%;">
+				<div class="" style="text-align: center;font-size: 18px;color:#2c8ef3 ;line-height: 1.5;">
+					提现申请已提交,
+					<div id="" style="font-size: 16px;">请耐心等待放款</div> 
+				</div>
+				<div id="msg" class="" style="text-align: center;line-height: 20px;margin-top: 5px;word-break: break-all;">
+					<!--您有一笔借款申请正在审核中，请保持手机畅通，稍后可能会有审核专员联系您-->
+				</div>
+			</div>
+			<a href="../parkingLot.html" class="btn" id="finbtn" style="display: block;margin: 15px 35px;border-radius: 20px;" >
+				完 成
+			</a>
+		</div>
+		<script src="../../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+            function error(msg){
+                $("body").append('<div class="error"><span class="error_msg"></span></div>');
+                $(".error").show();
+                $(".error_msg").html(msg);
+                setTimeout(function(){
+                    $(".error").remove();
+                },1500);
+            }
+		</script>
+	</body>
+
+</html>

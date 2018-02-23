@@ -1,0 +1,45 @@
+*{
+    padding:0;
+    margin: 0;
+    border: 0 none;
+    text-decoration: none;
+    list-style: none;
+    -webkit-font-smoothing: antialiased;/*kjc*/
+   	font-family: helvetica "微软雅黑" sans-serif;
+    box-sizing: border-box;
+}
+
+a:hover, a:visited, a:link, a:active{
+    text-decoration:none
+    outline: none;
+    color: #000000;
+}
+
+
+.t-msg{
+	text-align: center;
+	color: #FF0000;
+	height: 50px;
+	line-height: 50px;
+	font-size: 18px;
+}
+.menu{
+	width: 100%;
+	border-top: 1px solid #E0E0E0;
+	/*border-bottom: 1px solid #EAEAEA;*/
+}
+.menu .menu-list{
+	width: 100%;
+	padding: 16px;
+	border-top: 1px solid #EAEAEA;
+}
+.menu:last-of-type{
+	border-bottom: 1px solid #EAEAEA;
+}
+.menu-list .red{
+	color: #FF0000;
+}
+.menu-list .icon-right{
+	float: right;
+	font-size: 14px;
+}

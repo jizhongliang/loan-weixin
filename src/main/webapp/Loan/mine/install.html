@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>设置</title>
+		<link rel="stylesheet" type="text/css" href="../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../css/huiflex.css" />
+		<link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+
+		<style type="text/css">
+			@font-face {
+				font-family: "iconfont";
+				src: url('../css/iconfont.ttf') format('truetype')/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+			}
+			
+			.iconfont {
+				font-family: "iconfont" !important;
+				font-size: 16px;
+				font-style: normal;
+				-webkit-font-smoothing: antialiased;
+				-webkit-text-stroke-width: 0.2px;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			
+			.icon {
+				display: inline-block;
+				min-width: 18px;
+				height: 18px;
+				color: #97acc1;
+				margin-right: 5px;
+			}
+			
+			.allbg {
+				/*background:-webkit-gradient(linear, 0 0, 100% 100%, from(#2AF3CB),to(#2C8EF3));*/
+				background: -webkit-linear-gradient(-50deg, rgba(42, 243, 178, 0.72), #2C90F2);
+				height: 180px;
+			}
+			
+			.font-num {
+				font-family: helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+			}
+			
+			.cycle_data {
+				height: 150px;
+				width: 150px;
+				border-radius: 150px;
+				border: 10px solid white;
+				text-align: center;
+				color: white;
+				margin: auto;
+			}
+			
+			.liitem {
+				padding: 15px;
+				border-bottom: 1px solid #dbd9da;
+			}
+			.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+			.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+
+
+			.customer{
+				background-image: url(../img/666830017191577610.png);
+				background-size: 15px 15px;
+				background-repeat: no-repeat;
+			}
+
+
+			.raiders{
+				background-image: url(../img/670679769043048446.png);
+				background-size: 15px 15px;
+				background-repeat: no-repeat;
+			}
+
+			._hidden{
+				visibility: hidden;
+
+			}
+
+
+			.btn {
+				background: #9E9FA5;
+				text-align: center;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border-radius: 6px;
+				margin: 25px;
+				margin-top: 35px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="" style="background: white;">
+			<ul>
+				<a href="javascript:void(0)">
+					<li class="liitem">
+						<span style="color:#333333;">
+							<i class="icon iconfont">&#xe613;</i><span id="xgdlmm">修改登录密码</span>
+						</span>
+						<span id="" style="float: right;color: #999999;">
+							 >
+						</span>
+					</li>
+				</a>
+				<a href="javascript:void(0)">
+					<li class="liitem">
+						<span style="color:#333333;">
+							<i class="icon iconfont">&#xe613;</i><span id="wjdemm">忘记登录密码</span>
+						</span>
+						<span id="" style="float: right;color: #999999;">
+							 >
+						</span>
+					</li>
+				</a>
+				<a href="javascript:void(0)">
+					<li class="liitem">
+						<span style="color:#333333;">
+							<i class="icon iconfont">&#xe613;</i><span id="tpswdlabel">设置交易密码</span>
+						</span>
+						<span id="" style="float: right;color: #999999;">
+							 >
+						</span>
+					</li>
+				</a>
+
+				<a href="javascript:void(0)" id="forget" style="display: none">
+					<li class="liitem">
+						<span style="color:#333333;">
+							<i class="icon iconfont">&#xe60a;</i><span id="rptswdlabel">忘记交易密码</span>
+						</span>
+						<span id="" style="float: right;color: #999999;">
+							 >
+						</span>
+					</li>
+				</a>
+			</ul>
+		</div>
+
+		<div style="position: fixed;bottom: 0;width: 100%;">
+			<div id="loginout" class="btn">
+				退出登录
+			</div>
+		</div>
+
+
+
+
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var pswdUrl="";
+			
+			function isSetTradePwd(tdata) {
+				postSerDataWithHeader('/wechat/user/api/isSetTradePwd.shtml', {
+					"id": tdata.userId
+				}, afterIsSetTradePwd, '交易密码');
+			}
+
+			function afterIsSetTradePwd(data) {
+				if(data.success) {
+					if(data.data.isSet) {
+						pswdUrl = "../login/resetTPwd.html?timeStamp="+getTimeStamp();
+						$('#tpswdlabel').text("修改交易密码");
+                        $('#forget').show();
+
+					} else {
+						pswdUrl = "../login/setTPwd.html?page=mine&timeStamp="+getTimeStamp();
+						$('#tpswdlabel').text("设置交易密码");
+                        $('#forget').hide();
+					}
+				} else {
+					error(data.message)
+				}
+			}
+
+			function initEvent(tdata, durl) { //tdata null 注册
+				$('#cycle_data').click(function() {
+					if(!tdata) {
+						window.location.href = durl
+					}
+				});
+
+				$('a').click(function() {
+					if(!tdata) {
+						window.location.href = durl;
+						return;
+					}
+					var le = $("a").length;
+					if (le ==3){
+                        switch($(this).index()) {
+                        case 0:
+                        	 window.location.href = "../login/resetDLPwd.html?timeStamp="+getTimeStamp();
+                            break;
+                        case 1:
+                        	 window.location.href = "../login/forgetpwd.html" + location.search;
+                            break;
+                        case 2:
+                        	if(pswdUrl==""){
+                        		
+                        	}else{
+                        	 window.location.href = pswdUrl;
+                        	}
+                            //							window.location.href="../login/setTPwd.html"
+                            break;
+                        default :
+                            break;
+				       }
+                        }else if (le ==4){
+                        switch($(this).index()) {
+                        case 0:
+                       	 window.location.href = "../login/resetDLPwd.html?timeStamp="+getTimeStamp();
+                           break;
+                       case 1:
+                       	 window.location.href = "../login/forgetpwd.html" + location.search;
+                           break;
+                        case 2:
+                         if(pswdUrl==""){
+                        		
+                        	}else{
+                        	 window.location.href = pswdUrl;
+                        	}
+                            break;
+                        case 3:
+                        	window.location.href =  "forPwd.html";
+                            break;
+                        default :
+                            break;
+                    }
+				}
+
+				});
+			}
+			$("#loginout").click(function(){
+				if(localStorage.caiweiWx) {
+					var caiweiWx = JSON.parse(localStorage.caiweiWx);
+					setTimeout(function() {
+                        postSerDataWithHeader('/wechat/user/api/loginout.shtml', {
+							openid: caiweiWx.openId,
+							unionid: caiweiWx.unionId
+						}, loginout, '微信退出');
+					}, 200);
+				}
+			});
+			function loginout(data) {
+				if(data.success) {
+                    window.location.href = "../login/login.html?timeStamp="+getTimeStamp();
+				}else{
+				    error(data.message);
+				}
+			}
+			function wxLogin(caiweiWx) {
+				setTimeout(function() {
+					postSerData('/wechat/user/api/wxLogin.shtml', {
+						openid: caiweiWx.openId,
+						unionid: caiweiWx.unionId
+					}, check, '微信登录');
+				}, 200);
+
+			}
+			function check(login) {
+				if(login.success) {
+					localStorage.caiweiObj = JSON.stringify(login.data);
+					var tdata = login.data;
+					if(tdata.isLogin=="1"){
+					if(tdata.cat == "0") {
+						initEvent(false, "selectcat.html" + location.search);
+					} else {
+						setTimeout(function() {
+							isSetTradePwd(tdata);
+							initEvent(tdata);
+						}, 200);
+					}
+					}else{
+						 window.location.href = "../login/login.html?timeStamp="+getTimeStamp();
+					}
+				} else {
+                    window.location.href = "../login/login.html?timeStamp="+getTimeStamp();
+					//initEvent(false, "login.html" + location.search);
+				}
+			}
+
+			$(function() {
+					if(localStorage.caiweiWx) {
+						var caiweiWx = JSON.parse(localStorage.caiweiWx);
+						wxLogin(caiweiWx);
+					} else {
+						error("微信授权过期，请重新登录");
+					}
+			});
+            function error(msg){
+                $("body").append('<div class="error"><span class="error_msg"></span></div>');
+                $(".error").show();
+                $(".error_msg").html(msg);
+                setTimeout(function(){
+                    $(".error").remove();
+                },1500);
+            }
+		</script>
+	</body>
+
+</html>

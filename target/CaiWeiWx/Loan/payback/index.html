@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>归还</title>
+		<link rel="stylesheet" type="text/css" href="../css/base.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/huiflex.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+		<style type="text/css">
+			body {
+				color: #333;
+			}
+			
+			.headerbar {
+				font-size: 15px;
+				padding: 12px;
+				text-align: center;
+			}
+			
+			.fc {
+				color: #999999;
+			}
+			
+			.fb {
+				color: #333;
+			}
+			
+			.items {
+				border-bottom: 1px solid #dbd9da;
+				border-top: 1px solid #dbd9da;
+				background: white;
+				padding: 0px 15px;
+			}
+			.items2 {
+				border-bottom: 1px solid #dbd9da;
+				background: white;
+				padding: 0px 15px;
+			}
+			
+			.item_header {
+				text-align: center;
+				margin: 10px 0;
+			}
+			
+			.border-tb {
+				border-bottom: 1px solid #dbd9da;
+				border-top: 1px solid #dbd9da;
+			}
+			
+			.item_word {
+				border-top: 1px solid #dbd9da;
+				padding: 5px 0;
+				line-height: 1.5;
+				display: block;
+				color: #333;
+			}
+			
+			.right_tip {
+				float: right;
+				color: #333;
+			}
+			.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+			.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+		</style>
+	</head>
+
+	<body>
+		<div class="hui-flex border-tb fc" style="background: white;">
+			<div class="headerbar flex-1 fb" style="border-right: 1px solid #dbd9da">
+				分期记录
+			</div>
+			<div class="headerbar flex-1 ">
+				归还记录
+			</div>
+		</div>
+		<div id="borlist">
+			<ul>
+				<!--<li class="items" style="margin-top: 15px;">
+					<div class="item_header">
+						2017/10/05 借款 ￥1000.00
+					</div>
+					<a class="item_word" style="" href="currentRepay.html">
+						<div class="">11月20日应还</div>
+						<div class="" style="color: #2C8EF3;">
+							￥<span style="font-size: 15px;">2150.00</span> <span id="" class="right_tip">本期还款 ></span>
+						</div>
+						<div class="fc">从中国农业银行储蓄卡(2345)自动扣款</div>
+					</a>
+					<a class="item_word" style="padding: 10px 0;" href="repay.html">
+						<span id="" style="font-size:15px">未还余3期</span>
+						<span id="" class="right_tip">提前还款 ></span>
+					</a>
+					<a class="item_word" style="padding: 10px 0;" href="repayPlanDetail.html">
+						<span id="" style="font-size:15px">期数明细</span>
+						<span id="" class="right_tip"> ></span>
+					</a>
+				</li>-->
+			</ul>
+		</div>
+		<div id="repaylist" style="display: none;">
+			<ul>
+				<!--<li class="items hui-flex" style="padding: 10px;">
+					<div id="">09.11</div>
+					<div class="flex-1" style="text-align: center;">信用借款-还款</div>
+					<div class="" style="text-align: right;">2615.00</div>
+				</li>-->
+			</ul>
+		</div>
+
+		<div id="myModal" class="loading-modal" style="display: none;">
+			<!-- Modal content -->
+			<div class="loading-modal-content">
+				<img src="../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+				<span id="" style="vertical-align: middle;margin-left: 1em;color: #333;">
+					数据加载中...
+				</span>
+			</div>
+		</div>
+
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var borrowList;
+			var hasrepaylist=false;
+			var borrowId;
+			var id;
+			$(function() {
+				var code = GetQueryString("code");
+				if(localStorage.caiweicode && localStorage.caiweicode == code) {
+					if(localStorage.caiweiWx) {
+						var caiweiWx = JSON.parse(localStorage.caiweiWx);
+						wxLogin(caiweiWx);
+					} else {
+						error("微信授权过期，请重新登录");
+					}
+				} else {
+					localStorage.caiweicode = code;
+					getCheckWxUser();
+				}
+				
+
+			})
+
+			function initEvent(data) {
+				$('.headerbar').click(function() {
+					$('.headerbar').removeClass("fb");
+					$(this).addClass("fb");
+					switch($(this).index()) {
+						case 0:
+							getBorrowList(data);
+							$('#borlist').show();
+							$('#repaylist').hide();
+							break;
+						case 1:
+							getRepaylist(data);
+							$('#borlist').hide();
+							$('#repaylist').show();
+							break;
+					}
+				});
+			}
+
+			function check(login) {
+				if(login.success) {
+					localStorage.caiweiObj = JSON.stringify(login.data);
+					var tdata=login.data;
+					if(tdata.isLogin=="1"){
+					initEvent(tdata);
+					getBorrowList(tdata);
+					}else{
+						 window.location.href = "../login/login.html?timeStamp="+getTimeStamp();
+					}
+				}else{
+                    window.location.href = "../login/login.html?timeStamp="+getTimeStamp();
+				}
+			}
+
+			function checkWxUser(data) {
+				var login = data.login;
+				var wxdata = data.wxdata;
+				localStorage.caiweiWx = JSON.stringify(wxdata);
+				check(login);
+			}
+
+
+			function wxLogin(caiweiWx) {
+				$('#myModal').show();
+				setTimeout(function(){
+					postSerData('/wechat/user/api/wxLogin.shtml', {
+						openid: caiweiWx.openId,
+						unionid: caiweiWx.unionId
+					}, check, '微信授权');
+					$('#myModal').hide();
+				},200);
+			}
+
+			function getCheckWxUser() {
+				$('#myModal').show();
+				setTimeout(function(){
+					postSerData('/wechat/user/api/checkWxUser.shtml', {
+						query: GetQueryString("code")
+					}, checkWxUser, '微信授权');
+					$('#myModal').hide();
+				},200);
+			}
+
+			function getBorrowList(data) {
+				if(!borrowList&&data) {
+					$('#myModal').show();
+					setTimeout(function(){
+						postSerDataWithHeader('/wechat/borrow/api/borrowList.shtml', {
+							"id": data.userId
+						}, initborList, '微信授权');
+						$('#myModal').hide();
+					},200);
+				}
+
+			}
+
+			function getRepaylist(data) {
+				if(!hasrepaylist&&data) {
+					$('#myModal').show();
+					setTimeout(function(){
+						postSerDataWithHeader('/wechat/borrow/api/borrowRepayList.shtml', {
+							"id": data.userId
+						}, initRepayList, '微信授权');
+						$('#myModal').hide();
+					},200);
+				}else{
+//					error(JSON.stringify(hasrepaylist));
+				}
+
+			}
+
+			function initborList(data) {
+				if(data.success) {
+					var cat="";
+                    if(localStorage.caiweiObj){
+                        var cwobj = JSON.parse(localStorage.caiweiObj);
+                        cat=cwobj.cat;
+                    }
+					borrowList = data;
+					var items = data.data.items;
+					for(var i = 0; i < items.length; i++) {
+						(function() {
+							var k = i;
+							var li = $('<li class="items" style="margin-top: 15px;"></li>');
+							li.append('<div class="item_header">' + getDateFormatStr(new Date(items[k].borrow_date), "yyyy/MM/dd") + ' 分期金额 ￥' + Number(items[k].amount).toFixed(2) + '	</div>');
+
+							var currentRepay=$('<a  class="item_word" style="" href="javascript:void(0)">' +
+                                '<div class="">' + getDateFormatStr(new Date(items[k].current_repay_date), "MM月dd日") + '应还</div>' +
+                                '<div class="" style="color: #2C8EF3;">' +
+                                '￥<span style="font-size: 15px;">' + Number(items[k].current_repay_amount).toFixed(2) + '</span> <span id="" class="right_tip">本期归还 ></span>' +
+                                '</div>' +
+                                '<div class="fc">' + items[k].bankCardNo + '</div>' +
+                                '</a>');
+							$(currentRepay).click(function () {
+                                onClickCurrentRepay(items[k].current_repay_id);
+                            })
+							if(cat=="10"){
+                                li.append(currentRepay);
+							}
+							var earlya=$('<a class="item_word" style="padding: 10px 0;" href="javascript:void(0)"><span id="" style="font-size:15px">剩余' + items[k].unRepay_periods + '期未归还</span><span id="" class="right_tip">提前归还 ></span>	</a>');
+							$(earlya).click(function () {
+                                preRepayCheck(items[k].borrowId);
+                            });
+                            li.append(earlya);
+							li.append('<a class="item_word" style="padding: 10px 0;" href="repayPlanDetail.html?id=' + items[k].borrowId + '"><span id="" style="font-size:15px">期数明细</span><span id="" class="right_tip"> ></span></a>');
+							$('#borlist>ul').append(li);
+						})()
+					}
+				} else {
+					error(data.message);
+				}
+			}
+
+
+			function onClickCurrentRepay(repayId) {
+
+                setTimeout(function(){
+                    postSerDataWithHeader('/wechat/borrow/api/repayDetail.shtml', {
+                        "id": repayId
+                    }, function (data) {
+                        if(data.success) {
+                            window.location.href="currentRepay.html?id="+repayId+"&timeStamp="+getTimeStamp();
+                        }else{
+                            error(data.message);
+                        }
+                    }, '本期还款');
+                },200);
+            }
+			function preRepayCheck(bid) {
+
+                    $('#myModal').show();
+                    setTimeout(function(){
+                        borrowId=bid
+                        postSerDataWithHeader('/wechat/borrow/api/calcPrePayment.shtml', {
+                            "id": bid
+                        }, initPreRepayCheck, '提前还款');
+                        $('#myModal').hide();
+                    },200);
+
+            }
+
+            function initPreRepayCheck(data) {
+                if(data.success) {
+                    window.location.href="earlyRepay.html?id="+borrowId+"&timeStamp="+getTimeStamp();
+				}else{
+                    error(data.message);
+				}
+            }
+
+            
+
+			function initRepayList(data) {
+				if(data.success) {
+					hasrepaylist=true;
+					var items = data.data.items
+					for(var i = 0; i < items.length; i++) {
+						(function() {
+							var k = i;
+							$('#repaylist>ul').append('<li class="items2 hui-flex" style="padding: 10px;"><div id="">' + getDateFormatStr(new Date(items[k].payTime)) + '</div><div class="flex-1" style="text-align: center;">归还成功-' + items[k].remark + '</div><div class="" style="text-align: right;">' + Number(items[k].amount).toFixed(2) + '</div></li>');
+						})()
+					}
+				} else {
+					error(data.message);
+				}
+			}
+
+            function error(msg){
+                $("body").append('<div class="error"><span class="error_msg"></span></div>');
+                $(".error").show();
+                $(".error_msg").html(msg);
+                setTimeout(function(){
+                    $(".error").remove();
+                },1500);
+            }
+		</script>
+
+	</body>
+
+</html>

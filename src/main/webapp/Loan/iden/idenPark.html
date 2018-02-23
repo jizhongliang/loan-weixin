@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+    <META HTTP-EQUIV="expires" CONTENT="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="format-detection" content="telephone=no,date=no,address=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>实名认证</title>
+    <link rel="stylesheet" type="text/css" href="../css/base.css" />
+    <link rel="stylesheet" type="text/css" href="../css/huiflex.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+    <style type="text/css">
+        body {
+            color: #333;
+        }
+
+        @font-face {
+            font-family: "iconfont";
+            src: url('../css/iconfont.ttf') format('truetype')/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+        }
+
+        .iconfont {
+            font-family: "iconfont" !important;
+            font-size: 16px;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-stroke-width: 0.2px;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .icon {
+            display: inline-block;
+            min-width: 18px;
+            height: 18px;
+            color: #999999;
+            margin-right: 5px;
+        }
+
+        .inputbg {
+            border-bottom: 1px solid #dbd9da;
+            padding: 10px 0px;
+        }
+
+
+
+        .inputbg input {
+            /*text-align: right;*/
+            font-size: 18px;
+            outline: none;
+            border: none;
+            padding-left:5px;
+            width: 180px;
+        }
+
+        .btn {
+            background: #2c8ef3;
+            text-align: center;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+            margin: 25px;
+            margin-top: 35px;
+        }
+
+        .photopar {
+            width: 100px;
+            height: 100px;
+            margin: auto;
+        }
+
+        .photopar img {
+            max-width: 100%;
+            max-height: 100%;
+            line-height: 100px;
+        }
+
+        .fc {
+            color: #999999;
+        }
+        .error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+        .error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+        .pname{
+            /*height: 40px;*/
+        }
+    </style>
+</head>
+
+<body>
+<div class="" style="color: #999999;padding: 5px;padding-left: 15px;font-size: 12px;">
+    <i class="icon iconfont">&#xe6f7;</i>身份信息保存后无法修改，请务必正确填写
+</div>
+<div class="" style="text-align: center;padding-top: 15px;background: white;">
+
+    <div class="" style="display: inline-block ;width: 32%;">
+        <div id="btn2" class="photopar">
+            <img src="../img/camera.png" />
+        </div>
+        <div class="pname">身份证正面照</div>
+    </div>
+    <div class="" style="display: inline-block ;width: 32%;">
+        <div id="btn3" class="photopar">
+            <img src="../img/camera.png" />
+        </div>
+        <div class="pname">身份证背面照</div>
+    </div>
+</div>
+
+
+
+<div style="margin-top: 40%;width: 100%;">
+    <div id="upload" class="btn">
+        提交认证
+    </div>
+</div>
+
+<div id="errModal" class="loading-modal" style="display: none;z-index: 99;">
+    <!-- Modal content -->
+    <div class="loading-modal-content" style="padding: 0;width: 75%;">
+        <div class="" style="padding: 1em;text-align: center;border-bottom: 1px solid #dbd9da;color: #999999;">
+            <div class="" style="color: red;">
+                上传失败<i class="icon iconfont" style="color: red;font-size: 18px;margin-left: 5px;">&#xe617;</i>
+            </div>
+            <div class="" style="margin-top: 5px;" id="errtext">
+                请确保网络通畅,建议WIFI环境下操作！
+            </div>
+        </div>
+        <div class="hui-flex">
+            <div id="refresh" onclick="refresh()" class="flex-1" style="text-align: center;padding: 1em;color: #2C8EF3;">
+                刷新重试
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="confirmModal" class="loading-modal" style="display: none;z-index: 99;">
+    <div class="loading-modal-content" style="padding: 0;width: 85%;">
+        <div class="" style="padding: 1em;text-align: center;border-bottom: 1px solid #dbd9da;color: #999999;">
+            <div class="" style="background: white;">
+                <div class="" style="padding: 10px 0px; color: #ff0000">
+                    请确认你的身份信息是否正确?
+                </div>
+                <div class="inputbg">
+                    <span>姓&nbsp;&nbsp;&nbsp;&nbsp;名</span><input type="text" maxlength="10" name="confirmName" id="confirmName" value="" style="" class="flex-1" />
+                </div>
+                <div class="inputbg">
+                    <span>身份证</span><input type="text" maxlength="19" name="confirmCard" id="confirmCard" value="" style="padding-right: 0px;" class="flex-1" />
+                </div>
+
+                <div class="hui-flex">
+                    <div onclick="closeModal()" class="flex-1" style="text-align: center;padding: 1em;border-right: 1px solid #dbd9da;color: #999999;">
+                        取消
+                    </div>
+                    <div id="mmsure" class="flex-1" style="text-align: center;padding: 1em;color: #2C8EF3;">
+                        确定
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="myModal" class="loading-modal" style="display: none;">
+    <!-- Modal content -->
+    <div class="loading-modal-content">
+        <img src="../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+        <span id="msgtext" style="vertical-align: middle;margin-left: 1em">
+					数据上传中...
+				</span>
+    </div>
+</div>
+
+<script type="text/javascript" src="lib/crypto1/crypto/crypto.js"></script>
+<script type="text/javascript" src="lib/crypto1/hmac/hmac.js"></script>
+<script type="text/javascript" src="lib/crypto1/sha1/sha1.js"></script>
+<script type="text/javascript" src="lib/base64.js"></script>
+<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/plupload-2.1.2/js/plupload.full.min.js?vasun1988xs" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    var userid = ''
+    accessid = ''
+    accesskey = ''
+    host = ''
+    policyBase64 = ''
+    signature = ''
+    callbackbody = ''
+    filename = ''
+    key = ''
+    expire = 0
+    g_object_name = ''
+    g_object_name_type = 'random_name'
+    now = timestamp = Date.parse(new Date()) / 1000;
+    var uploadedFiles = []; //已上传文件数组
+    var upfiles = []; //准备上传数组，同时记录名称
+    var	nlreg = /(^\d{15}$)|(^\d{17}(\d|X)$)/;
+    var namereg=/^[\u4e00-\u9fa5]+$/;
+
+    function previewImage(file, callback) { //file为plupload事件监听函数参数中的file对象,callback为预览图片准备完成的回调函数
+        if(!file || !/image\//.test(file.type)) return; //确保文件是图片
+        if(file.type == 'image/gif') { //gif使用FileReader进行预览,因为mOxie.Image只支持jpg和png
+            var fr = new mOxie.FileReader();
+            fr.onload = function() {
+                callback(fr.result);
+                fr.destroy();
+                fr = null;
+            }
+            fr.readAsDataURL(file.getSource());
+        } else {
+            var preloader = new mOxie.Image();
+            preloader.onload = function() {
+                //preloader.downsize(550, 400);//先压缩一下要预览的图片,宽300，高300
+                var imgsrc = preloader.type == 'image/jpeg' ? preloader.getAsDataURL('image/jpeg', 80) : preloader.getAsDataURL(); //得到图片src,实质为一个base64编码的数据
+                callback && callback(imgsrc); //callback传入的参数为预览图片的url
+                preloader.destroy();
+                preloader = null;
+            };
+            preloader.load(file.getSource());
+        }
+    }
+
+    function get_signature() {
+        //可以判断当前expire是否超过了当前时间,如果超过了当前时间,就重新取一下.3s 做为缓冲
+        now = timestamp = Date.parse(new Date()) / 1000;
+        if(expire < now + 3) {
+            $.ajax({
+                type: 'get',
+                url: getPreUrl() + "/wechat/oss/getPostPolicy.shtml",
+                data: {
+                    "key": "mortgage/",
+                    "exp": 3600000
+                },
+                dataType: 'json',
+                timeout: 30000,
+                async: false,
+                success: function(data) {
+                    console.log(data);
+                    if(data == null) {
+                        error('服务器太拥挤，请稍后再试');
+                    } else {
+                        host = data['host']
+                        policyBase64 = data['policy']
+                        accessid = data['accessid']
+                        signature = data['signature']
+                        expire = parseInt(data['expire'])
+                        callbackbody = data['callback']
+                        key = data['dir']
+                    }
+                },
+                error: function(xhr, type) {
+                    error('网络不稳定，获取数据失败 ');
+                }
+            });
+            return true;
+        }
+        return false;
+    };
+
+    function random_string(len) {
+        len = len || 32;
+        var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+        var maxPos = chars.length;
+        var pwd = '';
+        for(i = 0; i < len; i++) {
+            pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+        }
+        return pwd;
+    }
+
+    function get_suffix(filename) {
+        pos = filename.lastIndexOf('.')
+        suffix = ''
+        if(pos != -1) {
+            suffix = filename.substring(pos)
+        }
+        return suffix;
+    }
+
+    function calculate_object_name(filename) {
+        if(g_object_name_type == 'local_name') {
+            g_object_name += "${filename}"
+        } else if(g_object_name_type == 'random_name') {
+            suffix = get_suffix(filename)
+            var timestamp = new Date().getTime();
+            g_object_name = key + timestamp + userid + random_string(2) + suffix
+        }
+        return ''
+    }
+
+    function get_uploaded_object_name(filename) {
+        if(g_object_name_type == 'local_name') {
+            tmp_name = g_object_name
+            tmp_name = tmp_name.replace("${filename}", filename);
+            return tmp_name
+        } else if(g_object_name_type == 'random_name') {
+            return g_object_name
+        }
+    }
+
+    function set_upload_param(up, file, ret, pname) {
+        if(ret == false) {
+            ret = get_signature()
+        }
+        g_object_name = key;
+        if(file != '') {
+            var filename = file.name;
+            suffix = get_suffix(filename);
+            calculate_object_name(filename);
+            upfiles.push({
+                "id": file.id,
+                "filename": "/" + g_object_name,
+                "name": pname
+            });
+        }
+        new_multipart_params = {
+            'key': g_object_name,
+            'policy': policyBase64,
+            'OSSAccessKeyId': accessid,
+            'success_action_status': '200', //让服务端返回200,不然，默认会返回204
+            'callback': callbackbody,
+            'signature': signature,
+        };
+
+        up.setOption({
+            'url': host,
+            'multipart_params': new_multipart_params
+        });
+
+        up.start();
+    }
+
+    var uploaders = [];
+
+    function initUploader(btn, preview, pname) {
+        var uploader = new plupload.Uploader({
+            runtimes: 'html5,flash,silverlight,html4',
+            //					browse_button: 'selectPhoto',
+            browse_button: btn,
+            multi_selection: false,
+            flash_swf_url: 'lib/plupload-2.1.2/js/Moxie.swf',
+            silverlight_xap_url: 'lib/plupload-2.1.2/js/Moxie.xap',
+            url: 'http://oss.aliyuncs.com',
+
+            filters: {
+//						mime_types: [{ //只允许上传图片
+//							title: "Image files",
+//							extensions: "jpg,jpeg,gif,png,bmp"
+//						}],
+                max_file_size: '10mb', //最大只能上传10mb的文件
+                prevent_duplicates: true //不允许选取重复文件
+            },
+
+            init: {
+
+                FilesAdded: function(up, files) {
+                    console.log(files);
+                    previewImage(files[0], function(imgSrc) {
+                        $(preview).attr("src", imgSrc);
+                    });
+                    console.log(uploader.files.length);
+                    if(uploader.files.length > 1) { //队列大于1,删除第一个,实现替换
+                        uploader.removeFile(uploader.files[0]);
+                    }
+
+                },
+
+                BeforeUpload: function(up, file) {
+                    console.log("BeforeUpload");
+                    set_upload_param(up, file, true, pname);
+                },
+
+                UploadProgress: function(up, file) {
+                    console.log("UploadProgress id:" + file.id + "::" + file.percent + "%");
+                },
+
+                FileUploaded: function(up, file, info) {
+                    console.log("FileUploaded")
+
+                    if(info.status == 200) {
+                        dofinish(file);
+                        console.log("success id:" + file.id + "::" + file.percent + "%");
+                    } else {
+                        console.log("failed id:" + file.id + "::" + info.response);
+                    }
+                },
+
+                Error: function(up, err) {
+                    if(err.code == -600) {
+                        error("选择的文件太大了,可以根据应用情况，在upload.js 设置一下上传的最大大小");
+                    } else if(err.code == -601) {
+                        error("选择的文件后缀不对,可以根据应用情况，在upload.js进行设置可允许的上传文件类型");
+                    } else if(err.code == -602) {
+                        error("这个文件已经上传过一遍了");
+                    } else {
+                        errorRefresh();
+                        error("Error xml:" + err.response);
+                    }
+                }
+            }
+        });
+        uploader.init();
+        return uploader;
+    }
+
+    function checkUploadData() {
+
+        for(var i = 0; i < uploaders.length; i++) {
+            if(uploaders[i].files.length < 1) {
+                if(i==0){
+                    error("请上传身份证正面照！");
+                }else{
+                    error("请上传身份证背面照！");
+                }
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function initEvent() {
+        $('#upload').click(function() {
+            if(checkUploadData()) {
+                $('#myModal').show();
+                //遍历上传
+                for(var i = 0; i < uploaders.length; i++) {
+                    if(uploaders[i].files.length == 1) {
+                        set_upload_param(uploaders[i], '', false);
+                    }
+                }
+
+            }
+
+        });
+
+        $("#mmsure").click(function () {
+            submitConfirmData();
+        })
+    }
+    $(function() {
+        //				reSize();
+        //				window.onresize = reSize();
+        if(localStorage.caiweiObj) {
+            var caiweiObj = JSON.parse(localStorage.caiweiObj);
+            userid = caiweiObj.userId;
+        } else {
+            error("微信授权过期");
+            return;
+        }
+        $.each($('.photopar'), function(i, n) {
+            uploaders.push(initUploader(n, $(n).find("img"), $(n).next(".pname").text()));
+        })
+        initEvent();
+    })
+
+    function dofinish(file) {
+        uploadedFiles.push(file);
+        if(uploadedFiles.length == upfiles.length) {
+            var param = {
+                "userId": userid,
+                "channelCode": "H5"
+            };
+            for(var i = 0; i < upfiles.length; i++) {
+                if(upfiles[i].name == "身份证正面照") {
+                    param.frontImg = upfiles[i].filename;
+                } else if(upfiles[i].name == "身份证背面照") {
+                    param.backImg = upfiles[i].filename;
+                }
+            }
+            authentication(param);
+        }
+
+    }
+
+    function error(msg){
+        $("body").append('<div class="error"><span class="error_msg"></span></div>');
+        $(".error").show();
+        $(".error_msg").html(msg);
+        setTimeout(function(){
+            $(".error").remove();
+        },1500);
+    }
+
+    function authentication(param) {
+        $('#myModal').show();
+        setTimeout(function() {
+            postSerDataWithHeader('/wechat/iden/api/parkingAuthentication.shtml', param, afterAuthentication, '身份认证');
+            $('#myModal').hide();
+        }, 200);
+
+    }
+
+    function afterAuthentication(data) {
+        if(data.success) {
+            showConfirmModal(data);
+        } else {
+            //					error(data.message)
+            $('#errtext').text(data.message);
+            errorRefresh();
+        }
+    }
+
+    function errorRefresh() {
+        $('#myModal').hide();
+        $('#errModal').show();
+    }
+
+    function refresh() {
+        window.location.reload();
+    }
+    
+    function closeModal() {
+        $("#confirmModal").hide();
+    }
+    
+    function showConfirmModal(data) {
+        $("#confirmModal").show();
+        if(data.success){
+            $("#confirmName").val(data.data.realName);
+            $("#confirmCard").val(data.data.idNo);
+        }else{
+            error(data.message);
+        }
+    }
+    
+    
+    function submitConfirmData() {
+        var realName=$("#confirmName").val();
+        var idNo=$("#confirmCard").val();
+        if(!validateName(realName)){
+            return false;
+        }
+
+        if(!validateIdCard(idNo)){
+            return false;
+        }
+        var param={
+            userId:userid,
+            realName:realName,
+            idNo:idNo
+        }
+        setTimeout(function() {
+            postSerDataWithHeader('/wechat/iden/api/updateUserIdCardInfo.shtml', param, function (data) {
+                if(data.success){
+                    error("认证更新成功");
+                    setTimeout(function () {
+                        window.location.href = "index.html?timeStamp="+getTimeStamp();
+                    },1500)
+
+                }else{
+                    error(data.message);
+                }
+            }, '身份信息确认');
+            $('#confirmModal').hide();
+        }, 200);
+    }
+    
+    
+</script>
+
+</body>
+
+</html>

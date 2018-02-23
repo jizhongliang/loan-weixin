@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+    <META HTTP-EQUIV="expires" CONTENT="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="format-detection" content="telephone=no,date=no,address=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>我的银行卡</title>
+    <link rel="stylesheet" type="text/css" href="../css/base.css" />
+    <link rel="stylesheet" type="text/css" href="../css/huiflex.css" />
+    <link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+    <style type="text/css">
+        body {
+            color: #333;
+        }
+
+        .title{
+            font-size: 20px;
+            padding: 10px 0px 20px 0px;
+        }
+
+        .cardInfo{
+            height: 180px;
+            font-size: 20px;
+            background: url("../img/credit_card@2x.png");
+            color: #FFFFFF;
+            background-repeat:no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .cardInfo .cardInfoTitle{
+            border-bottom: 1px #FFFFFF solid;
+            height: 90px;
+            line-height: 30px;
+        }
+
+        #cardName{
+            padding: 30px 0px 0px 30px;
+            font-size: 24px;
+        }
+
+        .btn {
+            background: #2c8ef3;
+            text-align: center;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+            margin: 25px;
+            margin-top: 35px;
+        }
+
+
+
+        .info{
+            margin: 40px 0px 0px 0px;
+        }
+
+        .info p{
+            line-height: 20px;
+            margin-top: 5px;
+            font-size: 15px;
+        }
+        .error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+        .error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+    </style>
+</head>
+
+<body>
+
+
+<div class="" style="margin-top: 1em;padding: 0 15px;background: white;">
+
+
+
+    <div class="cardInfo">
+        <div class="cardInfoTitle">
+            <div class="flex-1" id="cardName"></div>
+        </div>
+
+        <div id="cardNo" style="text-align: center;padding-top: 30px;">
+
+        </div>
+    </div>
+
+    <div class="info">
+        <h3>银行卡说明：</h3>
+        <p>
+            1、目前暂不支持线上更换银行卡，如需紧急更换银行卡请拨打 <span id="telNo"></span> 或联系客户经理进行更换。
+        </p>
+        <p>
+            2、绑定的银行卡仅将用于收取转让款及支付租金。
+        </p>
+
+
+    </div>
+</div>
+<div style="position: fixed;bottom: 0;width: 100%;">
+    <div id="savebtn" class="btn">
+        返 回
+    </div>
+</div>
+<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+    
+    
+    $(function () {
+        $("#savebtn").click(function () {
+            window.location.href = "../mine/index.html?code="+localStorage.caiweicode;
+        })
+
+        initData();
+
+        getBankCard();
+    })
+
+    
+    function getBankCard() {
+        if(localStorage.caiweiObj){
+            var caiweiObj=JSON.parse(localStorage.caiweiObj);
+            setTimeout(function(){
+                postSerDataWithHeader('/wechat/borrow/api/getBankCardInfo.shtml', {
+                    "id":caiweiObj.userId
+                }, function (data) {
+                    if(data.success){
+                        $("#cardName").text(data.data.bank);
+                        var cardNo=data.data.cardNo;
+                        cardNo=cardNo.substr(cardNo.length-4);
+                        cardNo="****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;"+cardNo;
+                        $("#cardNo").html(cardNo);
+                    }
+                }, '初始化银行');
+            },200);
+        }
+
+    }
+    
+    function initData() {
+        setTimeout(function(){
+            postSerDataWithHeader('/wechat/user/api/querySysConfig.shtml', {
+                "code": "service_phone"
+            }, function (data) {
+                if(data.success&&data.data.value){
+                    $("#telNo").html("<a style=\"text-decoration: underline\" href=\"tel:"+data.data.value+"\">"+data.data.value+"</a>");
+                }
+
+            }, '初始化银行');
+        },200);
+    }
+    
+    function error(msg){
+        $("body").append('<div class="error"><span class="error_msg"></span></div>');
+        $(".error").show();
+        $(".error_msg").html(msg);
+        setTimeout(function(){
+            $(".error").remove();
+        },1500);
+    }
+</script>
+
+</body>
+
+</html>

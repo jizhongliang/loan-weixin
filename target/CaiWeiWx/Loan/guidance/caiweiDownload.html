@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/caiweiDownload.css" />
+		<title>财位</title>
+	</head>
+
+	<body>
+		<section id="banner" class="md-block banner">
+			<img src="img/download/download_bg_old.png" class="bannerImg" />
+
+			<!--<div class="titleImg banImgPosi">
+				<img src="img/yinliu/v1/slogan.png"/>
+			</div>-->
+			<div class="md-block-f-in md-block-flex position">
+				<div class="ewm">
+					<a href="img/caiweigongzhonghao.png" download="caiweigongzhonghao.png" class="ewmClick"><img src="img/caiweigongzhonghao.png" /></a>
+				</div>
+				<a class="btn btn_inline gzBtn" href="img/caiweigongzhonghao.png" download="caiweigongzhonghao.png">关注公众号<br /><span>(公众号即可申请分期)</span></a>
+				<img src="img/ewmtext.png" style="width: 100%;" />
+			</div>
+			<div class="caiwei_description">
+				财位是为用户提供分期消费和按揭消费的普惠金融服务平台。主要有消费分期和车位分期两块业务。
+			</div>
+			<p class="footer">
+				<span>杭州财位资产管理有限公司</span>&nbsp;&nbsp;<span>公司热线:0571-8725-3536</span>
+			</p>
+		</section>
+
+	</body>
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+	<script type="text/javascript">
+		//判断运行环境（wx）
+		function isWeiXin() {
+			var ua = window.navigator.userAgent.toLowerCase();
+			if(ua.match(/MicroMessenger/i) == 'micromessenger') {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		$(function() {
+			if(isWeiXin()) {
+				$("#securityBtn,.btn").click(function() {
+					alert("请使用外部浏览器打开此链接。");
+				});
+
+			} else {
+				$(".btn").click(function() {
+
+				});
+			}
+			/*流量统计*/
+			function IsPC() {
+				var userAgentInfo = navigator.userAgent;
+				var Agents = ["Android", "iPhone",
+					"SymbianOS", "Windows Phone",
+					"iPad", "iPod"
+				];
+				var flag = true;
+				for(var v = 0; v < Agents.length; v++) {
+					if(userAgentInfo.indexOf(Agents[v]) > 0) {
+						flag = false;
+						break;
+					}
+				}
+				return flag;
+			}
+			var isPc = IsPC();
+			var u = navigator.userAgent;
+			var equipment = ""; //当前设备类型。
+			var url = document.referrer; //当前页面父页面。
+			var ip = returnCitySN.cip;
+			if(isPc) {
+				alert("当前为PC端设备，请使用手机打开本页面");
+			} else {
+				//alert("当前设备为移动端设备");
+				if(u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {
+					//安卓手机
+					//alert("当前设备为安卓设备");
+					equipment = "Android";
+				} else if(u.indexOf('iPhone') > -1) {
+					//苹果手机
+					//alert("当前设备为IOS设备");
+					equipment = "iOS";
+				}
+				//统计
+				$(".ewmClick,.gzBtn").click(function() {
+					$.ajax({
+						type: "post",
+						url: "http://api.51caiwei.com:11000/api/p2p/downloadCount/insert",
+						data: {
+							"equipment": equipment,
+							"ip": ip,
+							"url": url
+						},
+						success: function(data) {
+							console.log(data);
+						},
+						error: function() {
+							alert("请求出错！");
+						}
+					});
+				});
+			}
+
+		});
+	</script>
+
+</html>

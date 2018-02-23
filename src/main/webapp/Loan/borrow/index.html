@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">	
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" type="text/css" href="../css/huiflex.css" />
+		<title></title>
+		<style type="text/css">
+			body{
+				background: #f6f6f6;
+			}
+			.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+			.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+		</style>
+	</head>
+
+	<body>
+		<div class="hui-flex center" style="text-align: center;width: 100%;margin-top: 40%;">
+			<img src="../img/default.svg" />数据加载中请勿操作...
+		</div>
+		<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function() {
+				var code = GetQueryString("code");
+				
+				if(localStorage.caiweicode && localStorage.caiweicode == code) {
+					if(localStorage.caiweiWx) {
+						var caiweiWx= JSON.parse(localStorage.caiweiWx);
+						postSerData('/wechat/user/api/wxLogin.shtml', {
+							openid:caiweiWx.openId,
+							unionid:caiweiWx.unionId
+						}, check, '微信授权');
+					} else {
+						error("微信授权过期，请重新登录");
+					}
+				} else {
+					localStorage.caiweicode = code;
+					postSerData('/wechat/user/api/checkWxUser.shtml', {
+						query: GetQueryString("code")
+					}, checkWxUser, '微信授权');
+				}
+
+			})
+			
+			function check(login){
+				if(login.success) {
+					localStorage.caiweiObj=JSON.stringify(login.data);
+					if(login.data.isLogin=="1"){
+					switch (login.data.cat){
+						case "0":
+							window.location.href="selectcat.html"+"?timeStamp="+getTimeStamp();
+							break;
+						case "10":
+							window.location.href="credit.html"+"?timeStamp="+getTimeStamp();
+							break;
+						case "20":
+							window.location.href="parkingLot.html"+"?timeStamp="+getTimeStamp();
+							break;	
+					}
+					}else{
+						window.location.href = "../login/login.html"+"?timeStamp="+getTimeStamp();
+					}
+				} else {
+					window.location.href = "../login/login.html"+"?timeStamp="+getTimeStamp();
+				}
+			}
+
+			function checkWxUser(data) {
+				var login = data.login;
+				var wxdata = data.wxdata;
+				localStorage.caiweiWx=JSON.stringify(wxdata);
+				check(login);
+
+			}
+
+            function error(msg){
+                $("body").append('<div class="error"><span class="error_msg"></span></div>');
+                $(".error").show();
+                $(".error_msg").html(msg);
+                setTimeout(function(){
+                    $(".error").remove();
+                },1500);
+            }
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="format-detection" content="telephone=no,date=no,address=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<title>财位</title>
+	<link rel="stylesheet" type="text/css" href="../css/base.css" />
+	<link rel="stylesheet" type="text/css" href="../css/huiflex.min.css" />
+	<link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+
+	<style type="text/css">
+		@font-face {
+			font-family: "iconfont";
+			src: url('../css/iconfont.ttf') format('truetype')/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+		}
+
+		.iconfont {
+			font-family: "iconfont" !important;
+			font-size: 16px;
+			font-style: normal;
+			-webkit-font-smoothing: antialiased;
+			-webkit-text-stroke-width: 0.2px;
+			-moz-osx-font-smoothing: grayscale;
+		}
+
+		.icon {
+			display: inline-block;
+			min-width: 18px;
+			height: 18px;
+			margin-left: 5px;
+		}
+
+		.allbg {
+			/*background:-webkit-gradient(linear, 0 0, 100% 100%, from(#2AF3CB),to(#2C8EF3));*/
+			background: -webkit-linear-gradient(-50deg, rgba(42, 243, 178, 0.72), #2C90F2);
+		}
+
+		.font-num {
+			font-family: helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+		}
+
+		.borrowBtn {
+			padding: 1em;
+			width: 6em;
+			height: 6em;
+			line-height: 6em;
+			text-align: center;
+			margin: 0 auto;
+			border-radius: 6em;
+			margin-top: 6em;
+			background: -webkit-radial-gradient( circle, #2C8EF3, #2B9CED);
+			box-shadow: 0px 5px 5px #a9c8e8;
+		}
+
+		.mathbtn {
+			width: 60px;
+			text-align: center;
+			background: #2c8ef3;
+			color: white;
+			height: 40px;
+			line-height: 40px;
+		}
+
+		.numinput {
+			font-size: 20px;
+			/*margin: 10px 0;
+            padding: 5px;*/
+			border-radius: 5px;
+			/*border: 1px solid #DBD9DA;*/
+			text-align: right;
+			width: 100px;
+			outline: none;
+			border: none;
+		}
+
+		.error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+		.error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+	</style>
+</head>
+
+<body>
+
+<!--<div id="" style="background: -webkit-gradient(linear,0 0,0 100%,from(#2777EC),to(#6AC1FC));">-->
+<!--<div id="" style="background-image:linear-gradient(to bottom right,#2AF3CB,#2C8EF3);">-->
+<div id="" class="allbg">
+	<div id="remarkPar" class="remark" style="display: none;color: white;background: #033569;padding: 5px 10px;">
+		<i class="icon iconfont">&#xe653;</i> <span id="remark"></span>
+	</div>
+	<div class="" style='width: 100%;text-align: center;padding: 30px 0;'>
+		<div id="credit_title" style="margin-bottom: 0.6em;font-size: 16px;">
+			可分期额度(元)
+		</div>
+		<div id="credit_num" style='font-size: 44px;letter-spacing: 1.5px;'>
+			0
+		</div>
+	</div>
+	<div class="" style="padding: 1em;">
+		<div id="" style="">
+			总额度 <span id="total_credit" style="font-size: 18px;">0</span>
+		</div>
+		<div style='padding-top: 0.7em;' id="borrow_rate_descript">
+			<!--日利率万5 (1千元用1天利息只需0.5元)-->
+		</div>
+	</div>
+</div>
+
+<div id="bor_btn" class="borrowBtn">
+	立即申请
+</div>
+
+<div id="qa_par" class="" style="color: #A1B4C7;margin: 0 auto;width: 10em;margin-top: 2em;text-align: center;">
+	<a href="javascript:void(0)" style="color: #A1B4C7;">常见问题 </a>| <a href="../guidance/xinyongyindao_wx.html" style="color: #A1B4C7;">分期攻略 </a>
+</div>
+
+
+<div id="myModal" class="loading-modal" style="display: none;">
+	<!-- Modal content -->
+	<div class="loading-modal-content">
+		<img src="../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+		<span id="" style="vertical-align: middle;margin-left: 1em;color: #333;">
+			数据加载中...
+		</span>
+	</div>
+</div>
+
+<div id="borModal" class="loading-modal" style="display: none;">
+	<!-- Modal content -->
+	<div class="loading-modal-content " style="width: 75%;color: #333;">
+		<div class="" style="text-align: left;border-bottom: 1px solid #A9C8E8;padding: 10px;font-weight: bold;">
+			申请金额
+		</div>
+		<div class="hui-flex" style="background: white;margin: 10px 0;padding: 5px;border: 1px solid #DBD9DA;">
+			<input type="number" name="" id="numinput" value="" class="flex-1 numinput" />
+			<i class="icon iconfont" style="color: #999999;padding: 3px 0;display: none;" id="close">&#xe637;</i>
+		</div>
+		<div id="" style="font-size: 13px;color: #999999;padding: 0 10px;padding-bottom:10px;float: right;">
+			提现金额需为1千的整数倍
+		</div>
+		<div class="hui-flex" style="width: 100%;border-top: 1px solid #A9C8E8;padding-top: 10px;">
+			<div class="mathbtn flex-1" id="bsure" style="margin: 5px;border-radius: 5px;margin-left: 0px;">
+				确认
+			</div>
+			<div class="mathbtn flex-1" id="bcancel" style="margin: 5px;margin-right: 0px;border-radius: 5px;color: #2C8EF3;border: 1px solid #2C8EF3;background: white;">
+				取消
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+<script src="test.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    function cal(w, size) {
+        var calh = (document.body.clientWidth > 760 ? 760 : document.body.clientWidth) * size / w;
+        return parseInt(calh);
+    }
+
+    function reSize() {
+        $('#credit_num').css("font-size", cal(414, 44) + 'px');
+        $("#credit_title").css("font-size", cal(414, 16) + 'px');
+        $("body").css("font-size", cal(414, 14) + 'px');
+        $("#total_credit").css("font-size", cal(414, 18) + 'px');
+        $("#bor_btn").css("font-size", cal(414, 16) + 'px');
+
+    }
+
+    function initEvent(data, urlstr) {
+        $('#bor_btn').click(function() {
+            if(urlstr && urlstr.length > 0) {
+                if(urlstr == "borrow.html") {
+                    $('#borModal').show();
+                } else {
+                    if(urlstr.indexOf("?")!=-1){
+                        urlstr+="&timeStamp="+getTimeStamp();
+					}else{
+                        urlstr+="?timeStamp="+getTimeStamp();
+					}
+                    window.location.href = urlstr;
+                }
+            }
+        });
+
+
+        //借款
+        $('#numinput').change(function() {
+            $('#close').show();
+        });
+        $('#close').click(function() {
+            $('#numinput').val("");
+            $('#close').hide();
+
+        })
+
+        $('#bsure').click(function() {
+            var numinput = $('#numinput').val();
+            if(numinput.length > 0) {
+                if(Number(numinput) > Number(data.amount)) {
+                    error("借款金额不可以大于可借金额！！");
+                    return;
+                }
+                if(parseInt(numinput / 1000) !== numinput / 1000) {
+                    error("借款金额需为1千的整数倍！");
+                    return;
+
+                }
+                var amount = $('#numinput').val();
+                var periods=data.periods;
+                var rate=data.rate;
+                localStorage.removeItem("existHistoryCreditBorrow");
+                //清楚当前页面数据
+                $('#numinput').val("");
+                window.location.href = "borrow.html?a="+ amount+"&p=" + periods + "&r=" + rate+"&timestamp="+getTimeStamp();
+                $('#borModal').hide();
+            }
+        });
+
+        $('#bcancel').click(function() {
+            $('#numinput').val("");
+            $('#borModal').hide();
+        });
+    }
+
+    function initData(data) {
+        if(data.success) {
+            $('#credit_num').text(data.data.amount);
+            $('#total_credit').text(data.data.total_amount);
+            $('#borrow_rate_descript').text(data.data.borrow_rate_descript);
+            if(data.data.overdue_hint) {
+                $('#overdue_hint').text(data.data.overdue_hint);
+                $('#overDate').show();
+            }
+            if(data.data.remark) {
+                $('#remark').text(data.data.remark);
+                $('#remarkPar').show();
+            }
+
+            var urlStr = "";
+            if(data.data.auth == false) {
+                localStorage.page="credit"
+                urlStr = "../iden/index.html";
+            } else if(data.data.auth && data.data.pwd == false) {
+                urlStr = "../login/setTPwd.html?page=credit&timestamp="+getTimeStamp();
+            } else if(data.data.auth && data.data.pwd && data.data.canBorrow == false) {
+                $('#bor_btn').css("background", "#999999");
+            } else if(data.data.auth && data.data.pwd && data.data.canBorrow) {
+                urlStr = "borrow.html";
+                localStorage.everSucceedBorrow=data.data.everSucceedBorrow;
+            }
+
+            initEvent(data.data, urlStr);
+        } else {
+            error(data.message);
+        }
+
+    }
+
+    function initConfigh(data){
+        if(data.success) {
+
+            $('a').click(function(){
+
+                var url="../mine/question_chewei_problem.html"+"?timeStamp="+getTimeStamp();
+                if(localStorage.caiweiObj){
+                    var cwobj = JSON.parse(localStorage.caiweiObj);
+                    if(cwobj.cat=="10"){
+                        url="../mine/question_credit_problem.html?timeStamp="+getTimeStamp();
+                    }
+                }
+                switch ($(this).index()){
+                    case 0:
+                        location.href=url;
+                        break;
+                    case 1:
+                        location.href=data.data.notes;
+                        break;
+                }
+            });
+        } else {
+            error(data.message);
+        }
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+        reSize();
+        window.onresize = reSize;
+        if(localStorage.caiweiObj) {
+            var cwobj = JSON.parse(localStorage.caiweiObj);
+            id = cwobj.userId;
+            $('#myModal').show();
+            postSerDataWithHeader('/wechat/borrow/api/credit/index.shtml', {
+                id: id
+            }, initData, '初始化');
+            postSerDataWithHeader('/wechat/iden/api/configh.shtml', {
+                "id": "wx"
+            }, initConfigh, 'h5地址');
+            $('#myModal').hide();
+        } else {
+            error("微信授权过期");
+            return;
+        }
+        //initData(bindex);
+
+    });
+
+    function error(msg){
+        $("body").append('<div class="error"><span class="error_msg"></span></div>');
+        $(".error").show();
+        $(".error_msg").html(msg);
+        setTimeout(function(){
+            $(".error").remove();
+        },1500);
+    }
+</script>
+</body>
+
+</html>

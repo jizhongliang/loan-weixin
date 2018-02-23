@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+    <META HTTP-EQUIV="expires" CONTENT="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="format-detection" content="telephone=no,date=no,address=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>绑定银行卡</title>
+    <link rel="stylesheet" type="text/css" href="../css/base.css" />
+    <link rel="stylesheet" type="text/css" href="../css/huiflex.css" />
+    <link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+    <style type="text/css">
+        @font-face {
+            font-family: "iconfont";
+            src: url('../css/iconfont.ttf') format('truetype')/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+        }
+
+        .iconfont {
+            font-family: "iconfont" !important;
+            font-size: 16px;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-stroke-width: 0.2px;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .icon {
+            display: inline-block;
+            min-width: 18px;
+            height: 18px;
+            color: #2c8ef3;
+            margin-right: 5px;
+        }
+
+        body {
+            color: #333;
+        }
+
+        .inputbg {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dbd9da;
+        }
+
+        .inputbg input {
+            text-align: right;
+            font-size: 18px;
+            outline: none;
+            border: none;
+        }
+
+        .fc {
+            color: #999999;
+        }
+
+        .btn {
+            background: #2c8ef3;
+            text-align: center;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+            margin: 25px;
+            margin-top: 35px;
+        }
+
+        .dlist {
+            height: 150px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        .dlist>li {
+            text-align: center;
+            padding: 10px 5px;
+        }
+        .error{color: #fff;background: rgba(0,0,0,0.4);text-align: center;line-height: 50px;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 100;}
+        .error .error_msg{background: rgba(0,0,0,0.6);position: fixed;top: 35%;left: 20px;right: 20px;z-index: 100;border-radius: 5px;}
+    </style>
+</head>
+
+<body>
+
+
+<div id="bind_card">
+    <form action="" id="bcard_form">
+        <div id="" style="padding: 15px;font-size: 16px;">
+            卡号信息
+        </div>
+        <div class="" style="background: white;">
+            <div class="hui-flex inputbg">
+                <div id="" style="width: 90px;">卡号</div>
+                <input type="" name="card_no" id="card_no" value="" style="" class="flex-1" disabled="disabled" />
+            </div>
+            <div class="hui-flex inputbg">
+                <div id="" style="width: 90px;">银行</div>
+                <input type="" name="bank_name" id="bank_name" value="" style="" class="flex-1" disabled="disabled" />
+                <input type="hidden" name="bank_code" id="bank_code" value="" style="" class="flex-1" disabled="disabled" />
+            </div>
+            <div class="hui-flex inputbg">
+                <div id="" style="width: 90px;">持卡人姓名</div>
+                <input type="" name="id_holder" id="id_holder" value="" style="" class="flex-1" disabled="disabled" />
+            </div>
+            <div class="hui-flex inputbg">
+                <div id="" style="width: 90px;">证件类型</div>
+                <input type="" name="" id="" value="身份证" style="" class="flex-1" disabled="disabled" />
+            </div>
+            <div class="hui-flex inputbg">
+                <div id="" style="width: 90px;">证件号码</div>
+                <input type="" name="id_no" id="id_no" value="" style="" class="flex-1" disabled="disabled" />
+            </div>
+        </div>
+        <div id="" style="padding: 15px;font-size: 16px;">
+            验证手机号码
+        </div>
+        <div class="" style="background: white;">
+            <div class="hui-flex inputbg">
+                <div id="" style="width: 120px;">银行预留手机号码</div>
+                <input type="" name="mobile" id="mobile" value=""  class="flex-1"/>
+            </div>
+            <div class="hui-flex inputbg">
+                <div id="" style="width: 90px;">验证码</div>
+                <input type="" name="sms_code" id="sms_code" value="" style="width: 100px;text-align: left;" class="flex-1" />
+                <input type="hidden" name="order_no" id="order_no" value="" style="width: 100px;text-align: left;" class="flex-1" />
+                <div id="scodebtn" style="width: 90px;margin-left: 5px;background: #2C8EF3;color: white;text-align: center;border-radius: 5px;padding: 5px;">获取验证码</div>
+            </div>
+        </div>
+    </form>
+
+    <div class="" style="margin-top:30px;width: 100%;">
+        <div class="btn" style="" id="sure_btn">
+            确 认
+        </div>
+    </div>
+</div>
+
+
+<div id="myModal" class="loading-modal dismiss">
+    <!-- Modal content -->
+    <div class="loading-modal-content">
+        <img src="../img/default.svg" style="vertical-align: middle;width: 3em;margin-left: 1em;" />
+        <span id="" style="vertical-align: middle;margin-left: 1em">
+            数据加载中...
+        </span>
+    </div>
+</div>
+
+<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    var	re = /^1\d{10}$/
+    var btn_timer;
+    var countTime = 60;
+    var hasSend = false;
+    var bindCardData;
+    $(function() {
+        if(localStorage.caiweiObj) {
+            var cwobj = JSON.parse(localStorage.caiweiObj);
+            initEvent(cwobj);
+        } else {
+            error("微信授权过期");
+            return;
+        }
+    });
+
+
+
+
+    function changeBtn() {
+        if(countTime >= 0) {
+            $("#scodebtn").text(countTime + "秒重发");
+            countTime = countTime - 1;
+        } else {
+            stopBtn();
+        }
+    }
+
+    function stopBtn(){
+        clearInterval(btn_timer);
+        hasSend = false;
+        $("#scodebtn").text("| 获取验证码");
+        countTime = 60;
+    }
+
+    function sendWaiting() {
+        changeBtn();
+        btn_timer = setInterval(changeBtn, 1000);
+    }
+
+
+
+    function initConfigh(data) {
+        if(data.success) {
+            location.href = data.data.register
+        } else {
+            error(data.message);
+        }
+    }
+
+    function initEvent(data) {
+
+        initAuthData(data);
+
+        $('#agreement').click(function() {
+            $('#myModal').removeClass('dismiss');
+            setTimeout(function() {
+                postSerData('/wechat/iden/api/configh.shtml', {
+                    "id": "wx"
+                }, initConfigh, '服务协议');
+                $('#myModal').addClass('dismiss');
+            }, 200);
+        });
+
+
+
+        $('#scodebtn').click(function() {
+            if(!validatePhone($('#mobile').val())){
+                return;
+            }
+            sendWaiting();
+            /**/
+            var p = {
+                "bank_code": bindCardData.bankCode,
+                "bank_name": bindCardData.bankName,
+                "card_no": bindCardData.cardNo,
+                "id_holder": bindCardData.name,
+                "id_no": bindCardData.idcard,
+                "mobile": $('#mobile').val(),
+                "user_id": data.userId
+            }
+            sendMsg(p);
+        });
+
+        $('#sure_btn').click(function() {
+
+            if($('#sms_code').val().length<=0){
+                error("请输入验证码！");
+                return;
+            }
+
+            if(!validateSendCode($('#sms_code').val())){
+                return;
+            }
+
+            if($('#order_no').val().length<=0){
+                error("请先发送验证码！");
+                return;
+            }
+            var p = {
+                "bank_code": bindCardData.bankCode,
+                "bank_name": bindCardData.bankName,
+                "card_no": bindCardData.cardNo,
+                "id_holder": bindCardData.name,
+                "id_no": bindCardData.idcard,
+                "mobile": $('#mobile').val(),
+                "order_no": $('#order_no').val(),
+                "sms_code":$('#sms_code').val(),
+                "user_id": data.userId
+            }
+            bindCard(p);
+        });
+
+
+    }
+    function initAuthData(data) {
+        $("#mobile").val(data.loginName);
+        bindCardData={
+            cardNo:GetQueryString("cardno"),
+            bankName:utf8to16(decode64(GetQueryString("cardName"))),
+            bankCode:GetQueryString("cardCode"),
+            name:utf8to16(decode64(GetQueryString("name"))),
+            idcard:GetQueryString("idcard")
+        }
+        $('#card_no').val(bindCardData.cardNo);
+        $('#bank_name').val(bindCardData.bankName);
+        $('#bank_code').val(bindCardData.bankCode);
+        $('#id_holder').val(bindCardData.name);
+        $('#id_no').val(bindCardData.idcard);
+    }
+    function sendMsg(param) {
+        $('#myModal').show();
+        setTimeout(function(){
+            postSerDataWithHeader('/wechat/user/api/authSignReturnCW.shtml', param, afterSendMsg, '发送短信');
+            $('#myModal').hide();
+        },200);
+
+    }
+    function afterSendMsg(data) {
+        if(data.success) {
+            $('#order_no').val(data.data.order_no);
+        } else {
+            stopBtn();
+            error(data.message);
+        }
+    }
+    function bindCard(param) {
+        $('#myModal').show();
+        setTimeout(function(){
+            postSerDataWithHeader('/wechat/user/api/authSignReturnCW.shtml', param, afterBindCard, '提交绑卡');
+            $('#myModal').hide();
+        },200);
+
+    }
+    function afterBindCard(data) {
+        if(data.success) {
+            error("银行卡认证成功");
+            setTimeout(function () {
+                window.location.href="AuthenticationInfo.html";
+            },1500);
+
+        } else {
+            error(data.message);
+        }
+    }
+
+    function error(msg){
+        $("body").append('<div class="error"><span class="error_msg"></span></div>');
+        $(".error").show();
+        $(".error_msg").html(msg);
+        setTimeout(function(){
+            $(".error").remove();
+        },1500);
+    }
+
+</script>
+
+</body>
+
+</html>

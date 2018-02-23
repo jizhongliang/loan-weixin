@@ -1,0 +1,90 @@
+<html>
+
+	<head>
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+		<META HTTP-EQUIV="expires" CONTENT="0">	
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="format-detection" content="telephone=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>借款</title>
+		<link rel="stylesheet" type="text/css" href="../css/base.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/huiflex.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/loadingm.css" />
+		<style type="text/css">
+			@font-face {
+				font-family: "iconfont";
+				src: url('../css/iconfont.ttf') format('truetype')/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+			}
+			
+			.iconfont {
+				font-family: "iconfont" !important;
+				font-size: 16px;
+				font-style: normal;
+				-webkit-font-smoothing: antialiased;
+				-webkit-text-stroke-width: 0.2px;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			
+			.icon {
+				display: inline-block;
+				min-width: 18px;
+				height: 18px;
+				color: #2c8ef3;
+				margin-right: 5px;
+			}
+			
+			body {
+				color: #333;
+			}
+			
+			.btn {
+				background: #2c8ef3;
+				text-align: center;
+				color: white;
+				padding: 10px;
+				font-size: 16px;
+				border-radius: 6px;
+				margin: 15px;
+			}
+			
+			.fc {
+				color: #999999;
+			}
+			
+			.check {
+				color: #2c8ef3;
+				border-bottom: 1px solid #2c8ef3;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="applysuccess" style="">
+			<div class="" style="text-align: center;margin-top: 20%;margin-bottom: 10%;">
+				<i class="iconfont" style="font-size: 100px;color: #2c8ef3;">&#xe7be;</i>
+			</div>
+			<div class="" style="padding: 0 10%;">
+				<div class="" style="text-align: center;font-size: 18px;color:#2c8ef3 ;">
+					借款申请已提交
+				</div>
+				<div id="msg" class="" style="text-align: center;line-height: 20px;margin-top: 5px;word-break: break-word;">
+					<!--您有一笔借款申请正在审核中，请保持手机畅通，稍后可能会有审核专员联系您-->
+				</div>
+			</div>
+			<a href="credit.html" class="btn" id="finbtn" style="display: block;margin: 15 35px;border-radius: 20px;" >
+				完 成
+			</a>
+		</div>
+		<script src="../js/util_v1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			if(GetQueryString("m")){
+				var msg=GetQueryString("m");
+				document.getElementById("msg").innerHTML=utf8to16(decode64(msg)) ;
+			}
+		</script>
+	</body>
+
+</html>
